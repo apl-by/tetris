@@ -3,14 +3,13 @@
 
   &__list {
     list-style: none;
-  display: grid;
-  margin: 0;
-  padding: 0;
-  grid-template-rows: repeat(20, 1fr);
-  grid-template-columns: repeat(10, 1fr);
-  row-gap: 1.5px;
-  column-gap: 1.5px;
-  // max-width: 128px;
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    row-gap: 1.5px;
+    column-gap: 1.5px;
+    // max-width: 128px;
   }
-
 }
