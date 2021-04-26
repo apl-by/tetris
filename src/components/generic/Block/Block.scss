@@ -1,0 +1,28 @@
+$color: #000;
+$percent-center: 50%;
+
+.block {
+  $size: 15px;
+  width: $size;
+  height: $size;
+  box-sizing: border-box;
+  border: 1.5px solid $color;
+  opacity: 0.1;
+  position: relative;
+
+  &::before {
+    content: "";
+    $size: 9px;
+    width: $size;
+    height: $size;
+    background: $color;
+    position: absolute;
+    top: $percent-center;
+    left: $percent-center;
+    transform: translate(-$percent-center, -$percent-center);
+  }
+
+  &_active {
+    opacity: 1;
+  }
+}
