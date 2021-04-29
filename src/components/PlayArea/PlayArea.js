@@ -1,10 +1,10 @@
-import "./MainField.scss";
+import "./PlayArea.scss";
 import Block from "../generic/Block/Block";
 
-function MainField({ field }) {
+function PlayArea({ field }) {
   return (
-    <section className="main-field">
-      <ul className="main-field__list">
+    <section className="play-area">
+      <ul className="play-area__list">
         {Object.entries(field).map(([k, v]) => (
           <Block key={v.id} state={v.isActive} />
         ))}
@@ -13,4 +13,4 @@ function MainField({ field }) {
   );
 }
 
-export default MainField;
+export default PlayArea;
