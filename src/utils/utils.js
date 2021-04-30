@@ -107,3 +107,20 @@ export const checkRotation = (playAria, piece, piecePos) => {
     i < 10 ? false : playAria[`${i}`].isActive === true
   );
 };
+
+export const handleDrop = (playAria, piece, piecePos) => {
+  const { position, x, y } = piecePos;
+  const sum = x + y;
+  const cells = PIECES_CONFIG[`${piece}`][`${position}`].checkBottom;
+  const cellsToCheck = cells.map((i) => i + sum);
+
+  let count = y;
+  while (count < 190) {
+    if (cellsToCheck.some((i) => i > 209 || playAria[`${i}`].isActive === true))
+      break;
+
+    count += 10;
+    cellsToCheck.forEach((i, ind, arr) => (arr[ind] = i + 10));
+  }
+  return { ...piecePos, y: count };
+};

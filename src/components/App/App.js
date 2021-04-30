@@ -8,6 +8,7 @@ import {
   checkMovement,
   getTurnPosition,
   checkRotation,
+  handleDrop,
 } from "../../utils/utils";
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
     x: 0,
     y: 0,
   });
+  const [isRoundFinished, setIsRoundFinished] = useState(false);
+  const [pause, setPause] = useState(false);
 
   // Создание стартового объекта состояния игровой области
   useEffect(() => {
@@ -57,59 +60,83 @@ function App() {
     setPlayArea(updatePlayArea(playAreaNoPiece, pieces.current, piecePosition));
   }, [playAreaNoPiece, pieces, piecePosition]);
 
-  //  Обработчики нажатий клавиш
+  // ------------Функции обработчики ---------------------------------
+
+  const turnPiece = () => {
+    const newPos = getTurnPosition(piecePosition);
+    if (checkRotation(playAreaNoPiece, pieces.current, newPos)) {
+      setPiecePosition(newPos);
+    }
+  };
+
+  const moveLeft = () => {
+    if (
+      checkMovement(playAreaNoPiece, pieces.current, piecePosition, "checkLeft")
+    ) {
+      setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
+    }
+  };
+
+  const moveRight = () => {
+    if (
+      checkMovement(
+        playAreaNoPiece,
+        pieces.current,
+        piecePosition,
+        "checkRight"
+      )
+    ) {
+      setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
+    }
+  };
+
+  const moveDown = () => {
+    if (
+      checkMovement(
+        playAreaNoPiece,
+        pieces.current,
+        piecePosition,
+        "checkBottom"
+      )
+    ) {
+      setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
+    }
+  };
+
+  const dropDown = () => {
+    setPiecePosition(
+      handleDrop(playAreaNoPiece, pieces.current, piecePosition)
+    );
+  };
+
+  //  Обработчик нажатий клавиш
   const handleKeydown = (e) => {
-    if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-      console.log(1);
-      const newPos = getTurnPosition(piecePosition);
-      if (checkRotation(playAreaNoPiece, pieces.current, newPos)) {
-        setPiecePosition(newPos);
-      }
+    if (e.key === "ArrowUp" || e.key === "w") {
+      // console.log(1);
+      turnPiece();
+      return;
+    }
+    if (e.key === "ArrowLeft" || e.key === "a") {
+      // console.log(2);
+      moveLeft();
       return;
     }
 
-    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-      console.log(2);
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkLeft"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
-      }
+    if (e.key === "ArrowRight" || e.key === "d") {
+      // console.log(3);
+      moveRight();
       return;
     }
 
-    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-      console.log(3);
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkRight"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
-      }
+    if (e.key === "ArrowDown" || e.key === "s") {
+      // console.log(4);
+      moveDown();
       return;
     }
 
-    if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-      console.log(4);
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkBottom"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
-      }
+    if (e.key === "Control") {
+      // console.log(5);
+      dropDown();
       return;
     }
   };
