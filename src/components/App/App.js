@@ -2,7 +2,7 @@ import "./App.scss";
 import "../generic/Block/Block";
 import PlayArea from "../PlayArea/PlayArea";
 import { useState, useEffect } from "react";
-import { handlePieces, updatePlayArea } from "../../utils/utils";
+import { handlePieces, updatePlayArea, checkMovement } from "../../utils/utils";
 
 function App() {
   const [playArea, setPlayArea] = useState({});
@@ -35,6 +35,7 @@ function App() {
   }, []);
   // -------------------------------------------------------------------
   useEffect(() => {
+    if (!pieces.current) return;
     document.addEventListener("keydown", handleKeydown);
     document.addEventListener("keyup", handleKeyup);
     return () => {
@@ -57,12 +58,42 @@ function App() {
     }
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
       console.log(2);
+      if (
+        checkMovement(
+          playAreaNoPiece,
+          pieces.current,
+          piecePosition,
+          "checkLeft"
+        )
+      ) {
+        setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
+      }
     }
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
       console.log(3);
+      if (
+        checkMovement(
+          playAreaNoPiece,
+          pieces.current,
+          piecePosition,
+          "checkRight"
+        )
+      ) {
+        setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
+      }
     }
     if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
       console.log(4);
+      if (
+        checkMovement(
+          playAreaNoPiece,
+          pieces.current,
+          piecePosition,
+          "checkBottom"
+        )
+      ) {
+        setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
+      }
     }
   };
 

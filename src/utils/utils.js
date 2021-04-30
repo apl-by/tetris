@@ -41,3 +41,29 @@ export const updatePlayArea = (playAriaNoPiece, piece, piecePos) => {
   });
   return newPlayAria;
 };
+
+export const checkMovement = (playAriaNoPiece, piece, piecePos, direction) => {
+  const { position, x, y } = piecePos;
+  const sum = x + y;
+  const cells = PIECES_CONFIG[`${piece}`][`${position}`][`${direction}`];
+  const cellsToCheck = cells.map((i) => i + sum);
+  console.log(cellsToCheck);
+
+  if (cellsToCheck.some((i) => i > 209)) return false;
+
+  if (
+    direction === "checkLeft" &&
+    cellsToCheck.some((i) => String(i).match(/9$|-\d?1$/))
+  )
+    return false;
+
+  if (
+    direction === "checkRight" &&
+    cellsToCheck.some((i) => String(i).match(/0$|-\d?9$/))
+  )
+    return false;
+
+  return !cellsToCheck.some((i) =>
+    i < 10 ? false : playAriaNoPiece[`${i}`].isActive === true
+  );
+};
