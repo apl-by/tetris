@@ -1,6 +1,6 @@
 import PIECES_CONFIG from "./piecesConfig";
 import { PIECES_TYPES } from "./config";
-import cloneDeep from "lodash/cloneDeep";
+import _cloneDeep from "lodash/cloneDeep";
 
 const mixArray = (array) => {
   const arr = [...array];
@@ -28,8 +28,8 @@ export const handlePieces = (piecesObj) => {
   };
 };
 
-export const updatePlayArea = (playAriaNoPiece, piece, piecePos) => {
-  const newPlayAria = cloneDeep(playAriaNoPiece);
+export const updatePlayArea = (playAria, piece, piecePos) => {
+  const newPlayAria = _cloneDeep(playAria);
   const { position, x, y } = piecePos;
   const sum = x + y;
   const pieceCells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
@@ -42,28 +42,68 @@ export const updatePlayArea = (playAriaNoPiece, piece, piecePos) => {
   return newPlayAria;
 };
 
-export const checkMovement = (playAriaNoPiece, piece, piecePos, direction) => {
+export const checkMovement = (playAria, piece, piecePos, direction) => {
   const { position, x, y } = piecePos;
   const sum = x + y;
   const cells = PIECES_CONFIG[`${piece}`][`${position}`][`${direction}`];
   const cellsToCheck = cells.map((i) => i + sum);
-  console.log(cellsToCheck);
 
   if (cellsToCheck.some((i) => i > 209)) return false;
 
   if (
     direction === "checkLeft" &&
-    cellsToCheck.some((i) => String(i).match(/9$|-\d?1$/))
+    cellsToCheck.some((i) =>
+      i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
+    )
   )
     return false;
 
   if (
     direction === "checkRight" &&
-    cellsToCheck.some((i) => String(i).match(/0$|-\d?9$/))
+    cellsToCheck.some((i) =>
+      i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
+    )
   )
     return false;
 
   return !cellsToCheck.some((i) =>
-    i < 10 ? false : playAriaNoPiece[`${i}`].isActive === true
+    i < 10 ? false : playAria[`${i}`].isActive === true
+  );
+};
+
+export const getTurnPosition = (piecePosition) => {
+  const clone = { ...piecePosition };
+  clone.position =
+    clone.position === "base"
+      ? "left"
+      : clone.position === "left"
+      ? "reverse"
+      : clone.position === "reverse"
+      ? "right"
+      : "base";
+
+  return clone;
+};
+
+export const checkRotation = (playAria, piece, piecePos) => {
+  const { position, x, y } = piecePos;
+  const sum = x + y;
+  const cells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
+  const cellsToCheck = cells.map((i) => i + sum);
+
+  if (cellsToCheck.some((i) => i > 209)) return false;
+
+  if (
+    cellsToCheck.some((i) =>
+      i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
+    ) &&
+    cellsToCheck.some((i) =>
+      i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
+    )
+  )
+    return false;
+
+  return !cellsToCheck.some((i) =>
+    i < 10 ? false : playAria[`${i}`].isActive === true
   );
 };

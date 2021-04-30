@@ -2,7 +2,13 @@ import "./App.scss";
 import "../generic/Block/Block";
 import PlayArea from "../PlayArea/PlayArea";
 import { useState, useEffect } from "react";
-import { handlePieces, updatePlayArea, checkMovement } from "../../utils/utils";
+import {
+  handlePieces,
+  updatePlayArea,
+  checkMovement,
+  getTurnPosition,
+  checkRotation,
+} from "../../utils/utils";
 
 function App() {
   const [playArea, setPlayArea] = useState({});
@@ -55,7 +61,13 @@ function App() {
   const handleKeydown = (e) => {
     if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
       console.log(1);
+      const newPos = getTurnPosition(piecePosition);
+      if (checkRotation(playAreaNoPiece, pieces.current, newPos)) {
+        setPiecePosition(newPos);
+      }
+      return;
     }
+
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
       console.log(2);
       if (
@@ -68,7 +80,9 @@ function App() {
       ) {
         setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
       }
+      return;
     }
+
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
       console.log(3);
       if (
@@ -81,7 +95,9 @@ function App() {
       ) {
         setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
       }
+      return;
     }
+
     if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
       console.log(4);
       if (
@@ -94,6 +110,7 @@ function App() {
       ) {
         setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
       }
+      return;
     }
   };
 
