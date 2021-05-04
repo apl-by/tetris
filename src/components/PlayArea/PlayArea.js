@@ -6,7 +6,7 @@ function PlayArea({ field }) {
     <section className="play-area">
       <ul className="play-area__list">
         {Object.entries(field).map(([k, v]) => (
-          <Block key={v.id} state={v.isActive} />
+          <Block key={v.id} state={v.isActive} match={v.match} />
         ))}
       </ul>
     </section>

@@ -13,7 +13,7 @@ const mixArray = (array) => {
 
 export const handlePieces = (piecesObj) => {
   if (piecesObj.all.length < 2) {
-    const array = new Array(3).fill(PIECES_TYPES).flat();
+    const array = new Array(2).fill(PIECES_TYPES).flat();
     const newPieces = [...piecesObj.all, ...mixArray(array)];
     return {
       all: newPieces.slice(1),
@@ -28,8 +28,8 @@ export const handlePieces = (piecesObj) => {
   };
 };
 
-export const updatePlayArea = (playAria, piece, piecePos) => {
-  const newPlayAria = _cloneDeep(playAria);
+export const updatePlayArea = (playArea, piece, piecePos) => {
+  const newPlayAria = _cloneDeep(playArea);
   const { position, x, y } = piecePos;
   const sum = x + y;
   const pieceCells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
@@ -42,7 +42,7 @@ export const updatePlayArea = (playAria, piece, piecePos) => {
   return newPlayAria;
 };
 
-export const checkMovement = (playAria, piece, piecePos, direction) => {
+export const checkMovement = (playArea, piece, piecePos, direction) => {
   const { position, x, y } = piecePos;
   const sum = x + y;
   const cells = PIECES_CONFIG[`${piece}`][`${position}`][`${direction}`];
@@ -67,7 +67,7 @@ export const checkMovement = (playAria, piece, piecePos, direction) => {
     return false;
 
   return !cellsToCheck.some((i) =>
-    i < 10 ? false : playAria[`${i}`].isActive === true
+    i < 10 ? false : playArea[`${i}`].isActive === true
   );
 };
 
@@ -85,7 +85,7 @@ export const getTurnPosition = (piecePosition) => {
   return clone;
 };
 
-export const checkRotation = (playAria, piece, piecePos) => {
+export const checkRotation = (playArea, piece, piecePos) => {
   const { position, x, y } = piecePos;
   const sum = x + y;
   const cells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
@@ -104,11 +104,11 @@ export const checkRotation = (playAria, piece, piecePos) => {
     return false;
 
   return !cellsToCheck.some((i) =>
-    i < 10 ? false : playAria[`${i}`].isActive === true
+    i < 10 ? false : playArea[`${i}`].isActive === true
   );
 };
 
-export const handleDrop = (playAria, piece, piecePos) => {
+export const handleDrop = (playArea, piece, piecePos) => {
   const { position, x, y } = piecePos;
   const sum = x + y;
   const cells = PIECES_CONFIG[`${piece}`][`${position}`].checkBottom;
@@ -116,11 +116,72 @@ export const handleDrop = (playAria, piece, piecePos) => {
 
   let count = y;
   while (count < 190) {
-    if (cellsToCheck.some((i) => i > 209 || playAria[`${i}`].isActive === true))
+    if (cellsToCheck.some((i) => i > 209 || playArea[`${i}`].isActive === true))
       break;
 
     count += 10;
     cellsToCheck.forEach((i, ind, arr) => (arr[ind] = i + 10));
   }
   return { ...piecePos, y: count };
+};
+
+export const searchMatch = (playArea) => {
+  const clone = _cloneDeep(playArea);
+  const matches = {};
+  let match = 0;
+
+  for (let i = 200; i > 10 && match < 4; i -= 10) {
+    let activeCells = 0;
+    let nonActiveCells = 0;
+
+    for (let j = 0; j < 10 && !(activeCells && nonActiveCells); j++) {
+      clone[`${i + j}`].isActive ? activeCells++ : nonActiveCells++;
+    }
+
+    if (activeCells === 10) {
+      match++;
+      matches[`match${match}`] = {
+        rowStartCell: i,
+        cells: Array.from({ length: 10 }, (el, ind) => i + ind),
+      };
+    }
+    if (!activeCells) break;
+  }
+  return matches;
+};
+
+export const displayMatches = (playArea, matches) => {
+  const clone = _cloneDeep(playArea);
+  const matchedCells = Object.values(matches)
+    .map((i) => i.cells)
+    .flat();
+  matchedCells.forEach((i) => (clone[`${i}`].match = true));
+  return clone;
+};
+
+export const deleteMatches = (playArea, matches) => {
+  const clone = _cloneDeep(playArea);
+  const matchedRows = Object.values(matches).map((i) => i.rowStartCell);
+  const rowsBefore = [];
+  for (let i = matchedRows[0]; i > 10; i -= 10) {
+    rowsBefore.push(i);
+  }
+  const rowsWithoutMatches = rowsBefore.filter((i) => !matchedRows.includes(i));
+
+  let stop = false;
+  rowsBefore.forEach((i) => {
+    if (stop) return;
+
+    const rowForReplace = rowsWithoutMatches.splice(0, 1);
+    let activeCells = 0;
+    for (let j = 0; j < 10; j++) {
+      if (clone[`${i + j}`].isActive) activeCells++;
+      clone[`${i + j}`].isActive = clone[`${+rowForReplace + j}`].isActive;
+      clone[`${i + j}`].match = clone[`${+rowForReplace + j}`].match;
+    }
+
+    if (!activeCells) stop = true;
+  });
+
+  return clone;
 };

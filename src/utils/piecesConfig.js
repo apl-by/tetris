@@ -74,7 +74,7 @@ const PIECES_CONFIG = {
       cells: [4, 14, 24, 25],
       checkLeft: [3, 13, 23],
       checkRight: [5, 15, 26],
-      checkBottom: [35, 36],
+      checkBottom: [34, 35],
     },
   },
   J: {
