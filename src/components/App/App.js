@@ -26,8 +26,13 @@ function App() {
   });
   const [isBlocked, setIsBlocked] = useState(false);
   const [isRoundFinished, setIsRoundFinished] = useState(false);
+  const [isTimeEnded, setIsTimeEnded] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isPause, setIsPause] = useState(true);
   const [pressedKey, setPressedKey] = useState("");
+  const [isEffectBlocked, setIsEffectBlocked] = useState(false);
+  const [еffectСount, setEffectCount] = useState(0);
+  console.log(pressedKey);
 
   // Создание стартового объекта состояния игровой области
   useEffect(() => {
@@ -47,26 +52,29 @@ function App() {
     setPlayAreaNoPiece(initialState);
   }, []);
   // -------------------------------------------------------------------
+
+  //  Установка слушателей событий
   useEffect(() => {
     if (isBlocked) return;
     document.addEventListener("keyup", handleKeyup);
-    if (pressedKey) return;
     document.addEventListener("keydown", handleKeydown);
     return () => {
       document.removeEventListener("keydown", handleKeydown);
       document.removeEventListener("keyup", handleKeyup);
     };
   });
+  // ----------------------------------------------------------------------
 
-  // ------------------Обновление игрового поля-----------------------
+  // Обновление игрового поля
   useEffect(() => {
     if (!pieces.current) return;
     setPlayArea(updatePlayArea(playAreaNoPiece, pieces.current, piecePosition));
   }, [playAreaNoPiece, pieces, piecePosition]);
+  // ------------------------------------------------------------------------
 
-  // -------------Обработка результата раунда--------------------
-
+  // Обработка результата раунда
   const handleRoundEnd = (playArea, pieces) => {
+    setPressedKey("");
     setPlayAreaNoPiece(playArea);
     setPiecePosition({
       position: "base",
@@ -96,73 +104,56 @@ function App() {
     handleRoundEnd(currentPlayArea, pieces);
     setIsRoundFinished(false);
   }, [isRoundFinished, playArea, pieces]);
+  // --------------------------------------------------------------------
 
-  // ------------Функции обработчики ---------------------------------
-
-  const turnPiece = () => {
+  // Функции обработчики
+  const turnPiece = useCallback(() => {
     if (isPause || isBlocked) return;
     const newPos = getTurnPosition(piecePosition);
     if (checkRotation(playAreaNoPiece, pieces.current, newPos)) {
       setPiecePosition(newPos);
     }
-  };
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
 
-  const moveLeft = useCallback(
-    (key) => {
-      if (isPause || isBlocked) return;
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkLeft"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
-      }
-      setPressedKey(key);
-    },
-    [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]
-  );
+  const moveLeft = useCallback(() => {
+    if (isPause || isBlocked) return;
+    if (
+      checkMovement(playAreaNoPiece, pieces.current, piecePosition, "checkLeft")
+    ) {
+      setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
+    }
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
 
-  const moveRight = useCallback(
-    (key) => {
-      if (isPause || isBlocked) return;
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkRight"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
-      }
-      setPressedKey(key);
-    },
-    [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]
-  );
+  const moveRight = useCallback(() => {
+    if (isPause || isBlocked) return;
+    if (
+      checkMovement(
+        playAreaNoPiece,
+        pieces.current,
+        piecePosition,
+        "checkRight"
+      )
+    ) {
+      setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
+    }
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
 
-  const moveDown = useCallback(
-    (key) => {
-      if (isPause || isBlocked) return;
-      if (
-        checkMovement(
-          playAreaNoPiece,
-          pieces.current,
-          piecePosition,
-          "checkBottom"
-        )
-      ) {
-        setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
-        setPressedKey(key);
-        return;
-      }
-      setIsRoundFinished(true);
-      setIsBlocked(true);
-    },
-    [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]
-  );
+  const moveDown = useCallback(() => {
+    if (isPause || isBlocked) return;
+    if (
+      checkMovement(
+        playAreaNoPiece,
+        pieces.current,
+        piecePosition,
+        "checkBottom"
+      )
+    ) {
+      setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
+      return;
+    }
+    setIsRoundFinished(true);
+    setIsBlocked(true);
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
 
   const dropDown = () => {
     if (isPause || isBlocked) return;
@@ -177,66 +168,89 @@ function App() {
     setPieces(handlePieces(pieces));
     setIsPause(false);
   };
+  // ------------------------------------------------------------------------
 
-  // Устранение стандартной задержки keydown
+  // Устранение стандартной задержки автоповтора keydown
+  useEffect(() => {
+    if (!pressedKey || isEffectBlocked) return;
+    setIsEffectBlocked(true);
+    pressedKey === "left"
+      ? moveLeft()
+      : pressedKey === "right"
+      ? moveRight()
+      : pressedKey === "down"
+      ? moveDown()
+      : turnPiece();
+
+    const time =
+      еffectСount < 1 && pressedKey !== "turn"
+        ? 140
+        : pressedKey === "turn"
+        ? 250
+        : 60;
+    setTimeout(() => setIsEffectBlocked(false), time);
+
+    if (еffectСount < 1) setEffectCount(еffectСount + 1);
+  }, [
+    pressedKey,
+    moveLeft,
+    moveRight,
+    moveDown,
+    isEffectBlocked,
+    еffectСount,
+    turnPiece,
+  ]);
+  // -------------------------------------------------------------------------
+
+  // Установка таймера на движение фигур вниз, и её перемещение вниз
+  useEffect(() => {
+    if (isTimerRunning || isPause) return;
+    setIsTimerRunning(true);
+    setTimeout(() => setIsTimeEnded(true), 800);
+  }, [isTimerRunning, isPause]);
 
   useEffect(() => {
-    if (!pressedKey) return;
-    // По добавленному "+" определяется, что вызов обработчика не первый
-    // (для первого вызова применяется больший интервал времени)
-    const key = pressedKey.match(/\+$/) ? pressedKey : pressedKey + "+";
-    const time = pressedKey.includes("+") ? 70 : 170;
-    const func = pressedKey.includes("left")
-      ? moveLeft
-      : pressedKey.includes("right")
-      ? moveRight
-      : moveDown;
-    const timeout = setTimeout(func, time, key);
+    if (!isTimeEnded || pressedKey.includes("down")) return;
+    moveDown();
+    setIsTimeEnded(false);
+    setIsTimerRunning(false);
+  }, [isTimeEnded, moveDown, pressedKey]);
+  // -------------------------------------------------------------------------
 
-    return () => clearTimeout(timeout);
-  }, [pressedKey, moveLeft, moveRight, moveDown]);
-
-  //  Обработчик нажатий клавиш
+  //  Обработчики нажатий клавиш клавиатуры
   const handleKeydown = (e) => {
-    if (e.key === "p") {
-      // console.log(6);
+    if (e.key === "Shift") {
       setIsPause(!isPause);
       return;
     }
 
     if (e.key === "Enter") {
-      // console.log(7);
       startGame();
       return;
     }
 
-    if (isPause) return;
+    if (isPause || pressedKey) return;
 
     if (e.key === "ArrowUp" || e.key === "w") {
-      // console.log(1);
-      turnPiece();
+      setPressedKey("turn");
       return;
     }
     if (e.key === "ArrowLeft" || e.key === "a") {
-      // console.log(2);
-      moveLeft("left");
+      setPressedKey("left");
       return;
     }
 
     if (e.key === "ArrowRight" || e.key === "d") {
-      // console.log(3);
-      moveRight("right");
+      setPressedKey("right");
       return;
     }
 
     if (e.key === "ArrowDown" || e.key === "s") {
-      // console.log(4);
-      moveDown("down");
+      setPressedKey("down");
       return;
     }
 
     if (e.key === "Control" || e.key === "x") {
-      // console.log(5);
       dropDown();
       return;
     }
@@ -244,6 +258,7 @@ function App() {
 
   const handleKeyup = (e) => {
     setPressedKey("");
+    setEffectCount(0);
   };
   // ------------------------------------------------------------------
 
