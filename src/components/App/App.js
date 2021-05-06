@@ -13,6 +13,8 @@ import {
   displayMatches,
   deleteMatches,
 } from "../../utils/utils";
+import Main from "../Main/Main";
+import Footer from "../Footer/Footer";
 
 function App() {
   const [playArea, setPlayArea] = useState({});
@@ -174,13 +176,16 @@ function App() {
   useEffect(() => {
     if (!pressedKey || isEffectBlocked) return;
     setIsEffectBlocked(true);
-    pressedKey === "left"
-      ? moveLeft()
-      : pressedKey === "right"
-      ? moveRight()
-      : pressedKey === "down"
-      ? moveDown()
-      : turnPiece();
+
+    if (еffectСount >= 1) {
+      pressedKey === "left"
+        ? moveLeft()
+        : pressedKey === "right"
+        ? moveRight()
+        : pressedKey === "down"
+        ? moveDown()
+        : turnPiece();
+    }
 
     const time =
       еffectСount < 1 && pressedKey !== "turn"
@@ -210,7 +215,7 @@ function App() {
   }, [isTimerRunning, isPause]);
 
   useEffect(() => {
-    if (!isTimeEnded || pressedKey.includes("down")) return;
+    if (!isTimeEnded || pressedKey === "down") return;
     moveDown();
     setIsTimeEnded(false);
     setIsTimerRunning(false);
@@ -232,20 +237,24 @@ function App() {
     if (isPause || pressedKey) return;
 
     if (e.key === "ArrowUp" || e.key === "w") {
+      turnPiece();
       setPressedKey("turn");
       return;
     }
     if (e.key === "ArrowLeft" || e.key === "a") {
+      moveLeft();
       setPressedKey("left");
       return;
     }
 
     if (e.key === "ArrowRight" || e.key === "d") {
+      moveRight();
       setPressedKey("right");
       return;
     }
 
     if (e.key === "ArrowDown" || e.key === "s") {
+      moveDown();
       setPressedKey("down");
       return;
     }
@@ -264,10 +273,13 @@ function App() {
 
   return (
     <div className="app">
-      <button style={{ marginRight: 30 }} onClick={startGame}>
-        Start
-      </button>
-      <PlayArea field={playArea || {}}></PlayArea>
+      <Main>
+        <button style={{ marginRight: 300 }} onClick={startGame}>
+          Start
+        </button>
+        <PlayArea field={playArea || {}}></PlayArea>
+      </Main>
+      <Footer />
     </div>
   );
 }

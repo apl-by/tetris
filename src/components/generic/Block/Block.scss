@@ -1,27 +1,31 @@
-$color: #000;
+$color-dark: #000;
+$color-light: #f5f5f5;
 $match-color: #69030a;
-$percent-center: 50%;
+
+@mixin sqr-size($value) {
+  width: $value;
+  height: $value;
+  border: (0.12 * $value) solid $color-dark;
+
+  &::before {
+    border: (0.09 * $value) solid $color-light;
+  }
+}
 
 .block {
-  $size: 15px;
-  width: $size;
-  height: $size;
-  box-sizing: border-box;
-  border: 2px solid $color;
+  @include sqr-size(16px);
   opacity: 0.1;
+  box-sizing: border-box;
   position: relative;
-  background-color: #f5f5f5;
 
   &::before {
     content: "";
-    $size: 9px;
-    width: $size;
-    height: $size;
-    background: $color;
     position: absolute;
-    top: $percent-center;
-    left: $percent-center;
-    transform: translate(-$percent-center, -$percent-center);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $color-dark;
   }
 
   &_active {
@@ -45,16 +49,16 @@ $percent-center: 50%;
 
   100% {
     opacity: 0.1;
-    border-color: $color;
+    border-color: $color-dark;
   }
 }
 
 @keyframes match-before {
   0% {
-    background: $match-color;
+    background-color: $match-color;
   }
 
   100% {
-    background: $color;
+    background-color: $color-dark;
   }
 }

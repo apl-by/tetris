@@ -1,8 +1,17 @@
 .app {
-  margin-top: 100px;
+  box-sizing: border-box;
   width: 100%;
-  max-width: 1280px;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+  background: linear-gradient(
+    0deg,
+    rgba(67, 78, 128, 0.3) 0%,
+    rgba(173, 203, 218, 0.4) 21%,
+    rgba(215, 241, 242, 0.4) 100%
+  );
+
+
 }
