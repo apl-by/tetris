@@ -1,9 +1,11 @@
 import "./App.scss";
-import "../generic/Block/Block";
-import PlayArea from "../PlayArea/PlayArea";
+import "../BrickGame/Screen/Block/Block";
 import { useState, useEffect, useCallback } from "react";
 import {
+  createPlayArea,
+  createStatArea,
   handlePieces,
+  displayNextPiece,
   updatePlayArea,
   checkMovement,
   getTurnPosition,
@@ -13,12 +15,16 @@ import {
   displayMatches,
   deleteMatches,
 } from "../../utils/utils";
+import { CONTROL_KEYS } from "../../utils/config";
 import Main from "../Main/Main";
+import BrickGame from "../BrickGame/BrickGame";
 import Footer from "../Footer/Footer";
 
 function App() {
   const [playArea, setPlayArea] = useState({});
   const [playAreaNoPiece, setPlayAreaNoPiece] = useState({});
+  const [statArea, setStatArea] = useState({});
+  const [statAreaNoPiece, setStatAreaNoPiece] = useState({});
   const [pieces, setPieces] = useState({ all: [], current: "", next: "" });
   // console.log(playArea);
   const [piecePosition, setPiecePosition] = useState({
@@ -29,7 +35,6 @@ function App() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [isRoundFinished, setIsRoundFinished] = useState(false);
   const [isTimeEnded, setIsTimeEnded] = useState(false);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isPause, setIsPause] = useState(true);
   const [pressedKey, setPressedKey] = useState("");
   const [isEffectBlocked, setIsEffectBlocked] = useState(false);
@@ -46,18 +51,18 @@ function App() {
       return;
     }
 
-    const initialState = {};
-    for (let i = 10; i < 210; i++) {
-      initialState[`${i}`] = { isActive: false, match: false, id: i };
-    }
-    setPlayArea(initialState);
-    setPlayAreaNoPiece(initialState);
+    const initialPlayArea = createPlayArea();
+    const initialStatArea = createStatArea();
+
+    setPlayArea(initialPlayArea);
+    setPlayAreaNoPiece(initialPlayArea);
+    setStatArea(initialStatArea);
+    setStatAreaNoPiece(initialStatArea);
   }, []);
   // -------------------------------------------------------------------
 
   //  Установка слушателей событий
   useEffect(() => {
-    if (isBlocked) return;
     document.addEventListener("keyup", handleKeyup);
     document.addEventListener("keydown", handleKeydown);
     return () => {
@@ -75,17 +80,22 @@ function App() {
   // ------------------------------------------------------------------------
 
   // Обработка результата раунда
-  const handleRoundEnd = (playArea, pieces) => {
-    setPressedKey("");
-    setPlayAreaNoPiece(playArea);
-    setPiecePosition({
-      position: "base",
-      x: 0,
-      y: 0,
-    });
-    setPieces(handlePieces(pieces));
-    setIsBlocked(false);
-  };
+  const handleRoundEnd = useCallback(
+    (playArea, pieces) => {
+      setPressedKey("");
+      setPlayAreaNoPiece(playArea);
+      setPiecePosition({
+        position: "base",
+        x: 0,
+        y: 0,
+      });
+      const newPieces = handlePieces(pieces);
+      setStatArea(displayNextPiece(newPieces.next, statAreaNoPiece));
+      setPieces(newPieces);
+      setIsBlocked(false);
+    },
+    [statAreaNoPiece]
+  );
 
   useEffect(() => {
     if (!isRoundFinished) return;
@@ -105,7 +115,7 @@ function App() {
 
     handleRoundEnd(currentPlayArea, pieces);
     setIsRoundFinished(false);
-  }, [isRoundFinished, playArea, pieces]);
+  }, [isRoundFinished, playArea, pieces, handleRoundEnd]);
   // --------------------------------------------------------------------
 
   // Функции обработчики
@@ -167,14 +177,16 @@ function App() {
   };
 
   const startGame = () => {
-    setPieces(handlePieces(pieces));
+    const newPieces = handlePieces(pieces);
+    setStatArea(displayNextPiece(newPieces.next, statAreaNoPiece));
+    setPieces(newPieces);
     setIsPause(false);
   };
   // ------------------------------------------------------------------------
 
   // Устранение стандартной задержки автоповтора keydown
   useEffect(() => {
-    if (!pressedKey || isEffectBlocked) return;
+    if (!CONTROL_KEYS.includes(pressedKey) || isEffectBlocked) return;
     setIsEffectBlocked(true);
 
     if (еffectСount >= 1) {
@@ -191,7 +203,7 @@ function App() {
       еffectСount < 1 && pressedKey !== "turn"
         ? 140
         : pressedKey === "turn"
-        ? 250
+        ? 180
         : 60;
     setTimeout(() => setIsEffectBlocked(false), time);
 
@@ -209,28 +221,25 @@ function App() {
 
   // Установка таймера на движение фигур вниз, и её перемещение вниз
   useEffect(() => {
-    if (isTimerRunning || isPause) return;
-    setIsTimerRunning(true);
+    if (isTimeEnded || isPause) return;
     setTimeout(() => setIsTimeEnded(true), 800);
-  }, [isTimerRunning, isPause]);
+  }, [isTimeEnded, isPause]);
 
   useEffect(() => {
     if (!isTimeEnded || pressedKey === "down") return;
     moveDown();
     setIsTimeEnded(false);
-    setIsTimerRunning(false);
   }, [isTimeEnded, moveDown, pressedKey]);
   // -------------------------------------------------------------------------
 
   //  Обработчики нажатий клавиш клавиатуры
   const handleKeydown = (e) => {
-    if (e.key === "Shift") {
-      setIsPause(!isPause);
-      return;
-    }
+    if (!isPause) e.preventDefault();
+    if (isBlocked) return;
 
-    if (e.key === "Enter") {
-      startGame();
+    if (e.key === "p" && !pressedKey) {
+      pieces.current ? setIsPause(!isPause) : startGame();
+      setPressedKey("pause");
       return;
     }
 
@@ -274,10 +283,7 @@ function App() {
   return (
     <div className="app">
       <Main>
-        <button style={{ marginRight: 300 }} onClick={startGame}>
-          Start
-        </button>
-        <PlayArea field={playArea || {}}></PlayArea>
+        <BrickGame field={playArea || {}} statFild={statArea || {}} />
       </Main>
       <Footer />
     </div>

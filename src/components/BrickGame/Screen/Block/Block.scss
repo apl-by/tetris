@@ -1,5 +1,5 @@
 $color-dark: #000;
-$color-light: #f5f5f5;
+$color-light: #c8c8c8;
 $match-color: #69030a;
 
 @mixin sqr-size($value) {
@@ -8,7 +8,7 @@ $match-color: #69030a;
   border: (0.12 * $value) solid $color-dark;
 
   &::before {
-    border: (0.09 * $value) solid $color-light;
+    border: (0.08 * $value) solid $color-light;
   }
 }
 

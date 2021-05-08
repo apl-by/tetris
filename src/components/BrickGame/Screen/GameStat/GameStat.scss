@@ -1,0 +1,55 @@
+@mixin font($weight, $size, $family) {
+font: {
+      family: $family, Arial, "Helvetica Neue", sans-serif;
+      style: normal;
+      weight: $weight;
+      size: $size;
+    }
+}
+
+.game-stat {
+  box-sizing: border-box;
+  padding: 10px 0 10px 10px;
+  min-width: 100px;
+  color: #000;
+
+  &__title {
+    margin: 0 0 0 10px;
+    @include font(300, 12px, null);
+    line-height: 15px;
+  }
+
+  &__value {
+    margin: 5px 0 10px;
+    text-align: end;
+    @include font(600, 16px, "cursed_timer");
+  }
+
+  &__list {
+    list-style: none;
+    display: grid;
+    padding: 0;
+    margin: 15px 0 25px;
+    justify-content: center;
+    grid-template-rows: repeat(2, min-content);
+    grid-template-columns: repeat(4, min-content);
+    row-gap: 1.5px;
+    column-gap: 1.5px;
+  }
+
+  &__volume {
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+
+    &_muted {
+      opacity: 0.1;
+    }
+  }
+
+}

@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'cursed_timer';
+    src: url('./cursed-timer/cursedtimer-webfont.woff2') format('woff2'),
+         url('./cursed-timer/cursedtimer-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}

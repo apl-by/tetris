@@ -1,6 +1,24 @@
 import PIECES_CONFIG from "./piecesConfig";
-import { PIECES_TYPES } from "./config";
+import { PIECES_TYPES, BASE_NUM } from "./config";
 import _cloneDeep from "lodash/cloneDeep";
+
+export const createPlayArea = () => {
+  const initialState = {};
+  for (let i = 10; i < 210; i++) {
+    initialState[`${i}`] = { isActive: false, match: false, id: i };
+  }
+  return initialState;
+};
+
+export const createStatArea = () => {
+  const statAria = {};
+  const arrNum = BASE_NUM;
+  for (let i = 0; i < 8; i++) {
+    const num = arrNum.splice(0, 1);
+    statAria[`${num}`] = { isActive: false, id: num };
+  }
+  return statAria;
+};
 
 const mixArray = (array) => {
   const arr = [...array];
@@ -28,8 +46,17 @@ export const handlePieces = (piecesObj) => {
   };
 };
 
+export const displayNextPiece = (next, statArea) => {
+  const newStatArea = _cloneDeep(statArea);
+  const pieceCells = PIECES_CONFIG[`${next}`].base.cells;
+  pieceCells.forEach((i) => {
+    newStatArea[`${i}`].isActive = true;
+  });
+  return newStatArea;
+};
+
 export const updatePlayArea = (playArea, piece, piecePos) => {
-  const newPlayAria = _cloneDeep(playArea);
+  const newPlayArea = _cloneDeep(playArea);
   const { position, x, y } = piecePos;
   const sum = x + y;
   const pieceCells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
@@ -37,9 +64,9 @@ export const updatePlayArea = (playArea, piece, piecePos) => {
 
   newPos.forEach((i) => {
     if (i < 10) return;
-    newPlayAria[`${i}`].isActive = true;
+    newPlayArea[`${i}`].isActive = true;
   });
-  return newPlayAria;
+  return newPlayArea;
 };
 
 export const checkMovement = (playArea, piece, piecePos, direction) => {
