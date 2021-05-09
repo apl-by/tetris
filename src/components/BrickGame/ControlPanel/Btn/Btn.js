@@ -1,7 +1,16 @@
 import "./Btn.scss";
 import cn from "classnames";
 
-function Btn({ type, ariaLabel, modSize, modColor, modShadow, mix }) {
+function Btn({
+  type,
+  ariaLabel,
+  modSize,
+  modColor,
+  modShadow,
+  mix,
+  onDown,
+  onUp,
+}) {
   const cnBtn = cn(
     "btn",
     {
@@ -12,7 +21,15 @@ function Btn({ type, ariaLabel, modSize, modColor, modShadow, mix }) {
     { [`${mix}`]: mix }
   );
 
-  return <button className={cnBtn} type={type} aria-label={ariaLabel}></button>;
+  return (
+    <button
+      className={cnBtn}
+      type={type}
+      aria-label={ariaLabel}
+      onMouseDown={onDown}
+      onMouseUp={onUp}
+    ></button>
+  );
 }
 
 export default Btn;

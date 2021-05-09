@@ -87,7 +87,6 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("saved-game")) {
       const savedGame = JSON.parse(localStorage.getItem("saved-game"));
-      console.log(savedGame);
       setPlayArea(savedGame.playArea);
       setPlayAreaNoPiece(savedGame.playAreaNoPiece);
       setStatArea(savedGame.statArea);
@@ -279,11 +278,12 @@ function App() {
 
   const dropDown = () => {
     if (isPause || isBlocked || isGameOver) return;
-    setPiecePosition(
-      handleDrop(playAreaNoPiece, pieces.current, piecePosition)
-    );
-    setIsRoundFinished(true);
-    setIsBlocked(true);
+    const drop = handleDrop(playAreaNoPiece, pieces.current, piecePosition);
+    setPiecePosition(drop);
+    setTimeout(() => {
+      setIsRoundFinished(true);
+      setIsBlocked(true);
+    }, 0);
   };
 
   const startGame = () => {
@@ -292,6 +292,13 @@ function App() {
     setPieces(newPieces);
     setIsPause(false);
     setIsResrart(false);
+  };
+
+  const handlePause = () => {
+    if (isGameOver) return restartGame();
+
+    pieces.current ? setIsPause(!isPause) : startGame();
+    setPressedKey("pause");
   };
   // ------------------------------------------------------------------------
 
@@ -398,9 +405,7 @@ function App() {
     if (isBlocked) return;
 
     if ((e.key === "p" || e.key === "P") && !pressedKey) {
-      if (isGameOver) return restartGame();
-      pieces.current ? setIsPause(!isPause) : startGame();
-      setPressedKey("pause");
+      handlePause();
       return;
     }
 
@@ -447,6 +452,29 @@ function App() {
     setEffectCount(0);
   };
   // ------------------------------------------------------------------
+  // Обработчики нажатий мыши
+  const handleMouseDown = (key) => {
+    key === "turn"
+      ? turnPiece()
+      : key === "left"
+      ? moveLeft()
+      : key === "right"
+      ? moveRight()
+      : key === "down"
+      ? moveDown("down")
+      : key === "drop"
+      ? dropDown()
+      : key === "restart"
+      ? restartGame()
+      : handlePause();
+
+    setPressedKey(key);
+  };
+  const handleMouseUp = () => {
+    setPressedKey("");
+    if (setEffectCount !== 0) setEffectCount(0);
+  };
+  // ------------------------------------------------------------------
 
   return (
     <div className="app">
@@ -461,6 +489,8 @@ function App() {
           isStarted={pieces.current}
           isEnd={isGameOver}
           record={recordScore}
+          onDown={handleMouseDown}
+          onUp={handleMouseUp}
         />
       </Main>
       <Footer />

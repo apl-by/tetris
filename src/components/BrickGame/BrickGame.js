@@ -12,6 +12,8 @@ function BrickGame({
   isStarted,
   isEnd,
   record,
+  onDown,
+  onUp,
 }) {
   return (
     <section className="brick-game">
@@ -26,7 +28,7 @@ function BrickGame({
         isEnd={isEnd}
         record={record}
       />
-      <ControlPanel />
+      <ControlPanel onDown={onDown} onUp={onUp} />
     </section>
   );
 }

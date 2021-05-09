@@ -136,7 +136,7 @@
 
     &::after {
       @include arrow-item(45%, 50%);
-      background-image: url("../../../images/arrow-up.svg");
+      background-image: url("../../../images/rotate.svg");
     }
   }
   &__down {

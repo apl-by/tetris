@@ -17,6 +17,7 @@
   background: none;
   border: none;
   border-radius: 50%;
+  cursor: pointer;
 
   &_size_s {
     @include size(30px);
@@ -54,4 +55,7 @@
     @include shadow-size(-2px, 2px, 4px, 1px);
   }
 
+  &:focus {
+    outline: none;
+  }
 }
