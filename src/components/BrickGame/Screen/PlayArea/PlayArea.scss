@@ -1,5 +1,5 @@
 .play-area {
-  // max-width: 150px;
+  position: relative;
 
   &__list {
     list-style: none;
@@ -12,6 +12,45 @@
     column-gap: 1.5px;
     outline: 1.5px solid #000;
     box-sizing: border-box;
-    // max-width: 128px;
+  }
+
+  &__cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #c8c8c8;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+  }
+
+  &__pause {
+    visibility: visible;
+    animation: blink 1s linear infinite;
+  }
+
+  &__start {
+    text-align: center;
+  }
+
+  &__end {
+    text-align: center;
+  }
+}
+
+@keyframes blink {
+  0% {
+    visibility: visible;
+  }
+
+  60% {
+    visibility: hidden;
+  }
+
+  100% {
+    visibility: hidden;
   }
 }

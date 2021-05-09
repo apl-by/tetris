@@ -35,7 +35,7 @@
   }
 
   &__small-btn {
-    margin: 0 18px 20px 0;
+    margin: 0 60px 20px 0;
     position: relative;
 
     &:nth-child(1)::before {
@@ -46,19 +46,19 @@
       left: -10%;
     }
 
-    &:nth-child(2)::before {
-      content: "Звук(V)";
-      white-space: pre;
-      position: absolute;
-      top: 101%;
-      left: -10%;
-    }
+    // &:nth-child(2)::before {
+    //   content: "Звук(V)";
+    //   white-space: pre;
+    //   position: absolute;
+    //   top: 101%;
+    //   left: -10%;
+    // }
 
-    &:nth-child(3) {
+    &:nth-child(2) {
       margin-right: 0;
     }
 
-    &:nth-child(3)::before {
+    &:nth-child(2)::before {
       content: "Старт/\AПауза\A(P)";
       white-space: pre;
       position: absolute;

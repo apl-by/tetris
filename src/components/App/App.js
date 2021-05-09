@@ -14,8 +14,13 @@ import {
   searchMatch,
   displayMatches,
   deleteMatches,
+  getScore,
+  fillPlayAria,
+  clearPlayAria,
+  save,
 } from "../../utils/utils";
 import { CONTROL_KEYS } from "../../utils/config";
+import LEVEL_CONFIG from "../../utils/levelsConfig";
 import Main from "../Main/Main";
 import BrickGame from "../BrickGame/BrickGame";
 import Footer from "../Footer/Footer";
@@ -26,7 +31,6 @@ function App() {
   const [statArea, setStatArea] = useState({});
   const [statAreaNoPiece, setStatAreaNoPiece] = useState({});
   const [pieces, setPieces] = useState({ all: [], current: "", next: "" });
-  // console.log(playArea);
   const [piecePosition, setPiecePosition] = useState({
     position: "base",
     x: 0,
@@ -35,19 +39,65 @@ function App() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [isRoundFinished, setIsRoundFinished] = useState(false);
   const [isTimeEnded, setIsTimeEnded] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isPause, setIsPause] = useState(true);
   const [pressedKey, setPressedKey] = useState("");
   const [isEffectBlocked, setIsEffectBlocked] = useState(false);
   const [еffectСount, setEffectCount] = useState(0);
-  console.log(pressedKey);
+  const [score, setScore] = useState(0);
+  const [recordScore, setRecordScore] = useState(0);
+  const [lines, setLines] = useState(0);
+  const [level, setLevel] = useState(LEVEL_CONFIG["1"]);
+  const [wasUserMoveDown, setWasUserMoveDown] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [count, setCount] = useState(0);
+  const [gameOverTimer, setGameOverTimer] = useState(false);
+  const [isRestart, setIsResrart] = useState(false);
+  console.log(111);
+
+  // Объект для сохранения в LocalStorage
+  const saveData = useCallback(() => {
+    save({
+      playArea,
+      playAreaNoPiece,
+      statArea,
+      statAreaNoPiece,
+      pieces,
+      piecePosition,
+      score,
+      recordScore,
+      lines,
+      level,
+    });
+  }, [
+    playArea,
+    playAreaNoPiece,
+    statArea,
+    statAreaNoPiece,
+    pieces,
+    piecePosition,
+    score,
+    recordScore,
+    lines,
+    level,
+  ]);
+  // ---------------------------------------------------------------
 
   // Создание стартового объекта состояния игровой области
   useEffect(() => {
     if (localStorage.getItem("saved-game")) {
-      // не проверено - доработать
       const savedGame = JSON.parse(localStorage.getItem("saved-game"));
+      console.log(savedGame);
       setPlayArea(savedGame.playArea);
       setPlayAreaNoPiece(savedGame.playAreaNoPiece);
+      setStatArea(savedGame.statArea);
+      setStatAreaNoPiece(savedGame.statAreaNoPiece);
+      setPieces(savedGame.pieces);
+      setPiecePosition(savedGame.piecePosition);
+      setScore(savedGame.score);
+      setRecordScore(savedGame.recordScore);
+      setLines(savedGame.lines);
+      setLevel(savedGame.level);
       return;
     }
 
@@ -74,9 +124,9 @@ function App() {
 
   // Обновление игрового поля
   useEffect(() => {
-    if (!pieces.current) return;
+    if (!pieces.current || isRestart) return;
     setPlayArea(updatePlayArea(playAreaNoPiece, pieces.current, piecePosition));
-  }, [playAreaNoPiece, pieces, piecePosition]);
+  }, [playAreaNoPiece, pieces, piecePosition, isRestart]);
   // ------------------------------------------------------------------------
 
   // Обработка результата раунда
@@ -93,51 +143,105 @@ function App() {
       setStatArea(displayNextPiece(newPieces.next, statAreaNoPiece));
       setPieces(newPieces);
       setIsBlocked(false);
+      saveData();
     },
-    [statAreaNoPiece]
+    [statAreaNoPiece, saveData]
   );
 
   useEffect(() => {
     if (!isRoundFinished) return;
+    if (piecePosition.y === 0) {
+      setIsGameOver(true);
+      return;
+    }
     const currentPlayArea = playArea;
     const matches = searchMatch(currentPlayArea);
-
-    if (matches.match1) {
+    const matchedLines = Object.keys(matches).length;
+    if (matchedLines) {
       setPlayArea(displayMatches(currentPlayArea, matches));
       const newPlayAria = deleteMatches(currentPlayArea, matches);
+      const sumLines = lines + matchedLines;
       setTimeout(() => {
         setPlayArea(newPlayAria);
+        setScore(getScore(score, matchedLines, level.lev));
+        setLines(sumLines);
+        if (String(sumLines).startsWith(String(level.lev)) && sumLines !== 1) {
+          setLevel(LEVEL_CONFIG[level.lev + 1]);
+        }
         handleRoundEnd(newPlayAria, pieces);
       }, 600);
+
       setIsRoundFinished(false);
       return;
     }
 
     handleRoundEnd(currentPlayArea, pieces);
     setIsRoundFinished(false);
-  }, [isRoundFinished, playArea, pieces, handleRoundEnd]);
+  }, [
+    isRoundFinished,
+    playArea,
+    pieces,
+    handleRoundEnd,
+    level,
+    score,
+    lines,
+    piecePosition,
+  ]);
+  // --------------------------------------------------------------------
+
+  //  Обработка GameOver
+  useEffect(() => {
+    if (!isGameOver || gameOverTimer || isRestart) return;
+
+    if (count >= 40) {
+      setPieces({ all: [], current: "", next: "" });
+      setStatArea(statAreaNoPiece);
+      setIsBlocked(false);
+      setIsPause(true);
+      if (score > recordScore) setRecordScore(score);
+      return;
+    }
+    setGameOverTimer(true);
+    const rowStartCell = count < 20 ? 200 - count * 10 : 10 + (count - 20) * 10;
+
+    count < 20
+      ? setPlayArea(fillPlayAria(playArea, rowStartCell))
+      : setPlayArea(clearPlayAria(playArea, rowStartCell));
+
+    setCount(count + 1);
+    setTimeout(() => setGameOverTimer(false), 40);
+  }, [
+    isGameOver,
+    count,
+    gameOverTimer,
+    playArea,
+    statAreaNoPiece,
+    isRestart,
+    recordScore,
+    score,
+  ]);
   // --------------------------------------------------------------------
 
   // Функции обработчики
   const turnPiece = useCallback(() => {
-    if (isPause || isBlocked) return;
+    if (isPause || isBlocked || isGameOver) return;
     const newPos = getTurnPosition(piecePosition);
     if (checkRotation(playAreaNoPiece, pieces.current, newPos)) {
       setPiecePosition(newPos);
     }
-  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces, isGameOver]);
 
   const moveLeft = useCallback(() => {
-    if (isPause || isBlocked) return;
+    if (isPause || isBlocked || isGameOver) return;
     if (
       checkMovement(playAreaNoPiece, pieces.current, piecePosition, "checkLeft")
     ) {
       setPiecePosition({ ...piecePosition, x: piecePosition.x - 1 });
     }
-  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces, isGameOver]);
 
   const moveRight = useCallback(() => {
-    if (isPause || isBlocked) return;
+    if (isPause || isBlocked || isGameOver) return;
     if (
       checkMovement(
         playAreaNoPiece,
@@ -148,27 +252,33 @@ function App() {
     ) {
       setPiecePosition({ ...piecePosition, x: piecePosition.x + 1 });
     }
-  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
+  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces, isGameOver]);
 
-  const moveDown = useCallback(() => {
-    if (isPause || isBlocked) return;
-    if (
-      checkMovement(
-        playAreaNoPiece,
-        pieces.current,
-        piecePosition,
-        "checkBottom"
-      )
-    ) {
-      setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
-      return;
-    }
-    setIsRoundFinished(true);
-    setIsBlocked(true);
-  }, [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces]);
+  const moveDown = useCallback(
+    (key) => {
+      if (isPause || isBlocked || isGameOver) return;
+      if (key === "down") {
+        setWasUserMoveDown(true);
+      }
+      if (
+        checkMovement(
+          playAreaNoPiece,
+          pieces.current,
+          piecePosition,
+          "checkBottom"
+        )
+      ) {
+        setPiecePosition({ ...piecePosition, y: piecePosition.y + 10 });
+        return;
+      }
+      setIsRoundFinished(true);
+      setIsBlocked(true);
+    },
+    [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces, isGameOver]
+  );
 
   const dropDown = () => {
-    if (isPause || isBlocked) return;
+    if (isPause || isBlocked || isGameOver) return;
     setPiecePosition(
       handleDrop(playAreaNoPiece, pieces.current, piecePosition)
     );
@@ -181,12 +291,14 @@ function App() {
     setStatArea(displayNextPiece(newPieces.next, statAreaNoPiece));
     setPieces(newPieces);
     setIsPause(false);
+    setIsResrart(false);
   };
   // ------------------------------------------------------------------------
 
   // Устранение стандартной задержки автоповтора keydown
   useEffect(() => {
-    if (!CONTROL_KEYS.includes(pressedKey) || isEffectBlocked) return;
+    if (!Object.keys(CONTROL_KEYS).includes(pressedKey) || isEffectBlocked)
+      return;
     setIsEffectBlocked(true);
 
     if (еffectСount >= 1) {
@@ -221,29 +333,85 @@ function App() {
 
   // Установка таймера на движение фигур вниз, и её перемещение вниз
   useEffect(() => {
-    if (isTimeEnded || isPause) return;
-    setTimeout(() => setIsTimeEnded(true), 800);
-  }, [isTimeEnded, isPause]);
+    if (isTimerRunning || isPause || isBlocked || isGameOver) return;
+    setIsTimerRunning(true);
+    setWasUserMoveDown(false);
+    setTimeout(() => setIsTimeEnded(true), level.speed);
+  }, [isTimerRunning, isPause, level, isBlocked, isGameOver]);
 
   useEffect(() => {
     if (!isTimeEnded || pressedKey === "down") return;
+    if (wasUserMoveDown) {
+      setIsTimeEnded(false);
+      setIsTimerRunning(false);
+      return;
+    }
     moveDown();
     setIsTimeEnded(false);
-  }, [isTimeEnded, moveDown, pressedKey]);
+    setIsTimerRunning(false);
+  }, [isTimeEnded, moveDown, pressedKey, wasUserMoveDown]);
   // -------------------------------------------------------------------------
+
+  // Сброс игры
+  const restartGame = () => {
+    const initialPlayArea = createPlayArea();
+    setIsResrart(true);
+    setIsRoundFinished(false);
+    setPlayArea(initialPlayArea);
+    setPlayAreaNoPiece(initialPlayArea);
+    setStatArea(statAreaNoPiece);
+    setPieces({ all: [], current: "", next: "" });
+    setPiecePosition({
+      position: "base",
+      x: 0,
+      y: 0,
+    });
+    setScore(0);
+    setLines(0);
+    setLevel(LEVEL_CONFIG["1"]);
+    setCount(0);
+    setIsGameOver(false);
+    save({
+      playArea: initialPlayArea,
+      playAreaNoPiece: initialPlayArea,
+      statArea: statAreaNoPiece,
+      statAreaNoPiece,
+      pieces: { all: [], current: "", next: "" },
+      piecePosition: {
+        position: "base",
+        x: 0,
+        y: 0,
+      },
+      score: 0,
+      recordScore,
+      lines: 0,
+      level: LEVEL_CONFIG["1"],
+    });
+    startGame();
+  };
+
+  // ---------------------------------------------------------------------------
 
   //  Обработчики нажатий клавиш клавиатуры
   const handleKeydown = (e) => {
     if (!isPause) e.preventDefault();
     if (isBlocked) return;
 
-    if (e.key === "p" && !pressedKey) {
+    if ((e.key === "p" || e.key === "P") && !pressedKey) {
+      if (isGameOver) return restartGame();
       pieces.current ? setIsPause(!isPause) : startGame();
       setPressedKey("pause");
       return;
     }
 
-    if (isPause || pressedKey) return;
+    if ((e.key === "r" || e.key === "R") && !pressedKey) {
+      setPressedKey("restart");
+      restartGame();
+      return;
+    }
+
+    if (isGameOver || isPause || CONTROL_KEYS[pressedKey]?.includes(e.key))
+      return;
 
     if (e.key === "ArrowUp" || e.key === "w") {
       turnPiece();
@@ -263,7 +431,7 @@ function App() {
     }
 
     if (e.key === "ArrowDown" || e.key === "s") {
-      moveDown();
+      moveDown("down");
       setPressedKey("down");
       return;
     }
@@ -283,7 +451,17 @@ function App() {
   return (
     <div className="app">
       <Main>
-        <BrickGame field={playArea || {}} statFild={statArea || {}} />
+        <BrickGame
+          field={playArea || {}}
+          statFild={statArea || {}}
+          score={score}
+          lines={lines}
+          level={level.lev}
+          isPause={isPause}
+          isStarted={pieces.current}
+          isEnd={isGameOver}
+          record={recordScore}
+        />
       </Main>
       <Footer />
     </div>

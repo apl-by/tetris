@@ -1,4 +1,5 @@
 import PIECES_CONFIG from "./piecesConfig";
+import LINES_CONFIG from "./levelsConfig";
 import { PIECES_TYPES, BASE_NUM } from "./config";
 import _cloneDeep from "lodash/cloneDeep";
 
@@ -157,7 +158,7 @@ export const searchMatch = (playArea) => {
   const matches = {};
   let match = 0;
 
-  for (let i = 200; i > 10 && match < 4; i -= 10) {
+  for (let i = 200; i >= 10 && match < 4; i -= 10) {
     let activeCells = 0;
     let nonActiveCells = 0;
 
@@ -211,4 +212,52 @@ export const deleteMatches = (playArea, matches) => {
   });
 
   return clone;
+};
+
+export const getScore = (prev, lines, level) => {
+  const point = LINES_CONFIG[level].point[lines];
+  return prev + point;
+};
+
+export const fillPlayAria = (playArea, startCell) => {
+  const clone = _cloneDeep(playArea);
+  for (let i = 0; i < 10; i++) {
+    clone[`${startCell + i}`].isActive = true;
+  }
+  return clone;
+};
+
+export const clearPlayAria = (playArea, startCell) => {
+  const clone = _cloneDeep(playArea);
+  for (let i = 0; i < 10; i++) {
+    clone[`${startCell + i}`].isActive = false;
+  }
+  return clone;
+};
+
+export const save = ({
+  playArea,
+  playAreaNoPiece,
+  statArea,
+  statAreaNoPiece,
+  pieces,
+  piecePosition,
+  score,
+  recordScore,
+  lines,
+  level,
+}) => {
+  const savedGame = {
+    playArea: playArea,
+    playAreaNoPiece: playAreaNoPiece,
+    statArea: statArea,
+    statAreaNoPiece: statAreaNoPiece,
+    pieces: pieces,
+    piecePosition: piecePosition,
+    score: score,
+    recordScore: recordScore,
+    lines: lines,
+    level: level,
+  };
+  localStorage.setItem("saved-game", JSON.stringify(savedGame));
 };

@@ -45,18 +45,11 @@ function ControlPanel() {
         />
         <Btn
           type="button"
-          ariaLabel="кнопка звук"
-          modSize="s"
-          modColor="green"
-          // modShadow="reverse-s"
-          mix="control-panel__small-btn"
-        />
-        <Btn
-          type="button"
           ariaLabel="кнопка пауза/старт"
           modSize="s"
           modColor="green"
           mix="control-panel__small-btn"
+          // modShadow="reverse-s"
         />
         <Btn
           type="button"
