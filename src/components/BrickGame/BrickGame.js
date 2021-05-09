@@ -14,6 +14,7 @@ function BrickGame({
   record,
   onDown,
   onUp,
+  pressedKey,
 }) {
   return (
     <section className="brick-game">
@@ -28,7 +29,7 @@ function BrickGame({
         isEnd={isEnd}
         record={record}
       />
-      <ControlPanel onDown={onDown} onUp={onUp} />
+      <ControlPanel onDown={onDown} onUp={onUp} pressedKey={pressedKey} />
     </section>
   );
 }

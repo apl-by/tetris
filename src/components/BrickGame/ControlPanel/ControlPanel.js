@@ -1,7 +1,14 @@
 import "./ControlPanel.scss";
 import Btn from "./Btn/Btn";
 
-function ControlPanel({ onDown, onUp }) {
+function ControlPanel({ onDown, onUp, pressedKey }) {
+  const modShadow =
+    pressedKey === ""
+      ? null
+      : ["restart", "pause"].includes(pressedKey)
+      ? "reverse-s"
+      : "reverse-m";
+
   return (
     <div className="control-panel">
       <div className="control-panel__main">
@@ -10,6 +17,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="влево"
           modSize="m"
           modColor="yellow"
+          modShadow={pressedKey === "left" ? modShadow : null}
           mix="control-panel__left"
           onDown={() => onDown("left")}
           onUp={() => onUp()}
@@ -19,7 +27,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="повернуть"
           modSize="m"
           modColor="yellow"
-          // modShadow="reverse-m"
+          modShadow={pressedKey === "turn" ? modShadow : null}
           mix="control-panel__up"
           onDown={() => onDown("turn")}
           onUp={() => onUp()}
@@ -29,6 +37,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="вниз"
           modSize="m"
           modColor="yellow"
+          modShadow={pressedKey === "down" ? modShadow : null}
           mix="control-panel__down"
           onDown={() => onDown("down")}
           onUp={() => onUp()}
@@ -38,6 +47,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="вправо"
           modSize="m"
           modColor="yellow"
+          modShadow={pressedKey === "right" ? modShadow : null}
           mix="control-panel__right"
           onDown={() => onDown("right")}
           onUp={() => onUp()}
@@ -49,6 +59,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="кнопка сбросить"
           modSize="s"
           modColor="red"
+          modShadow={pressedKey === "restart" ? modShadow : null}
           mix="control-panel__small-btn"
           onDown={() => onDown("restart")}
           onUp={() => onUp()}
@@ -58,6 +69,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="кнопка пауза/старт"
           modSize="s"
           modColor="green"
+          modShadow={pressedKey === "pause" ? modShadow : null}
           mix="control-panel__small-btn"
           // modShadow="reverse-s"
           onDown={() => onDown("pause")}
@@ -68,6 +80,7 @@ function ControlPanel({ onDown, onUp }) {
           ariaLabel="кнопка уронить"
           modSize="l"
           modColor="yellow"
+          modShadow={pressedKey === "drop" ? modShadow : null}
           mix="control-panel__drop"
           onDown={() => onDown("drop")}
           onUp={() => onUp()}

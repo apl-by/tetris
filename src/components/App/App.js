@@ -53,7 +53,7 @@ function App() {
   const [count, setCount] = useState(0);
   const [gameOverTimer, setGameOverTimer] = useState(false);
   const [isRestart, setIsResrart] = useState(false);
-  console.log(111);
+  console.log(pressedKey);
 
   // Объект для сохранения в LocalStorage
   const saveData = useCallback(() => {
@@ -443,6 +443,7 @@ function App() {
 
     if (e.key === "Control" || e.key === "x") {
       dropDown();
+      setPressedKey("drop");
       return;
     }
   };
@@ -491,6 +492,7 @@ function App() {
           record={recordScore}
           onDown={handleMouseDown}
           onUp={handleMouseUp}
+          pressedKey={pressedKey}
         />
       </Main>
       <Footer />
