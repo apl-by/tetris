@@ -1,6 +1,7 @@
 import "./App.scss";
 import "../BrickGame/Screen/Block/Block";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import { useMediaQuery } from "react-responsive";
 import {
   createPlayArea,
   createStatArea,
@@ -53,9 +54,13 @@ function App() {
   const [count, setCount] = useState(0);
   const [gameOverTimer, setGameOverTimer] = useState(false);
   const [isRestart, setIsResrart] = useState(false);
-  console.log(pressedKey);
+  console.log(count);
 
-  // Объект для сохранения в LocalStorage
+  const isTablet = useMediaQuery({
+    query: "(max-width: 768px)",
+  });
+
+  // Сохранить объект в LocalStorage
   const saveData = useCallback(() => {
     save({
       playArea,
@@ -84,7 +89,7 @@ function App() {
   // ---------------------------------------------------------------
 
   // Создание стартового объекта состояния игровой области
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (localStorage.getItem("saved-game")) {
       const savedGame = JSON.parse(localStorage.getItem("saved-game"));
       setPlayArea(savedGame.playArea);
@@ -197,6 +202,22 @@ function App() {
       setStatArea(statAreaNoPiece);
       setIsBlocked(false);
       setIsPause(true);
+      save({
+        playArea,
+        playAreaNoPiece: playArea,
+        statArea: statAreaNoPiece,
+        statAreaNoPiece,
+        pieces: { all: [], current: "", next: "" },
+        piecePosition: {
+          position: "base",
+          x: 0,
+          y: 0,
+        },
+        score: 0,
+        recordScore,
+        lines: 0,
+        level: LEVEL_CONFIG["1"],
+      });
       if (score > recordScore) setRecordScore(score);
       return;
     }
@@ -255,7 +276,7 @@ function App() {
 
   const moveDown = useCallback(
     (key) => {
-      if (isPause || isBlocked || isGameOver) return;
+      if (isPause || isBlocked || isGameOver || isRoundFinished) return;
       if (key === "down") {
         setWasUserMoveDown(true);
       }
@@ -273,11 +294,19 @@ function App() {
       setIsRoundFinished(true);
       setIsBlocked(true);
     },
-    [isPause, isBlocked, piecePosition, playAreaNoPiece, pieces, isGameOver]
+    [
+      isPause,
+      isBlocked,
+      piecePosition,
+      playAreaNoPiece,
+      pieces,
+      isGameOver,
+      isRoundFinished,
+    ]
   );
 
   const dropDown = () => {
-    if (isPause || isBlocked || isGameOver) return;
+    if (isPause || isBlocked || isGameOver || isRoundFinished) return;
     const drop = handleDrop(playAreaNoPiece, pieces.current, piecePosition);
     setPiecePosition(drop);
     setTimeout(() => {
@@ -320,10 +349,10 @@ function App() {
 
     const time =
       еffectСount < 1 && pressedKey !== "turn"
-        ? 140
+        ? 170
         : pressedKey === "turn"
-        ? 180
-        : 60;
+        ? 170
+        : 50;
     setTimeout(() => setIsEffectBlocked(false), time);
 
     if (еffectСount < 1) setEffectCount(еffectСount + 1);
@@ -348,7 +377,7 @@ function App() {
 
   useEffect(() => {
     if (!isTimeEnded || pressedKey === "down") return;
-    if (wasUserMoveDown) {
+    if (wasUserMoveDown || isRoundFinished) {
       setIsTimeEnded(false);
       setIsTimerRunning(false);
       return;
@@ -356,7 +385,7 @@ function App() {
     moveDown();
     setIsTimeEnded(false);
     setIsTimerRunning(false);
-  }, [isTimeEnded, moveDown, pressedKey, wasUserMoveDown]);
+  }, [isTimeEnded, moveDown, pressedKey, wasUserMoveDown, isRoundFinished]);
   // -------------------------------------------------------------------------
 
   // Сброс игры
@@ -378,22 +407,6 @@ function App() {
     setLevel(LEVEL_CONFIG["1"]);
     setCount(0);
     setIsGameOver(false);
-    save({
-      playArea: initialPlayArea,
-      playAreaNoPiece: initialPlayArea,
-      statArea: statAreaNoPiece,
-      statAreaNoPiece,
-      pieces: { all: [], current: "", next: "" },
-      piecePosition: {
-        position: "base",
-        x: 0,
-        y: 0,
-      },
-      score: 0,
-      recordScore,
-      lines: 0,
-      level: LEVEL_CONFIG["1"],
-    });
     startGame();
   };
 
@@ -453,7 +466,8 @@ function App() {
     setEffectCount(0);
   };
   // ------------------------------------------------------------------
-  // Обработчики нажатий мыши
+
+  // Обработчики событий мыши
   const handleMouseDown = (key) => {
     key === "turn"
       ? turnPiece()
@@ -471,6 +485,7 @@ function App() {
 
     setPressedKey(key);
   };
+
   const handleMouseUp = () => {
     setPressedKey("");
     if (setEffectCount !== 0) setEffectCount(0);
@@ -493,9 +508,10 @@ function App() {
           onDown={handleMouseDown}
           onUp={handleMouseUp}
           pressedKey={pressedKey}
+          isTablet={isTablet}
         />
       </Main>
-      <Footer />
+      {!isTablet && <Footer />}
     </div>
   );
 }

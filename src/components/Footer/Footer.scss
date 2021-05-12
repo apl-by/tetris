@@ -19,24 +19,11 @@
   box-sizing: border-box;
   flex-shrink: 1;
 
+  @media screen and (max-width: 1048px) {
+    padding: 10px 50px;
+  }
+
   &__copyright {
     @include font;
-  }
-
-  &__link {
-    @include font;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    transition: opacity 0.2s linear;
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
-
-  &__icon {
-    width: 24px;
-    height: 24px;
   }
 }

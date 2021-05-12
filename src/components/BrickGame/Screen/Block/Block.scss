@@ -39,6 +39,10 @@ $match-color: #69030a;
   &_matched::before {
     animation: match-before 0.1s linear 6 alternate forwards;
   }
+
+  @media screen and (max-width: 410px) {
+    @include sqr-size(13px);
+  }
 }
 
 @keyframes match {

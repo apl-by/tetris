@@ -6,3 +6,5 @@ export const CONTROL_KEYS = {
   down: ["ArrowDown", "s", "S"],
   turn: ["ArrowUp", "w", "W"],
 };
+
+export const GH_LINK = "https://github.com/apl-by";

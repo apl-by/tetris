@@ -5,10 +5,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 5px;
   background: linear-gradient(
     0deg,
     rgba(67, 78, 128, 0.3) 0%,
     rgba(173, 203, 218, 0.4) 21%,
     rgba(215, 241, 242, 0.4) 100%
   );
-} 
+
+  @media screen and (max-width: 410px) {
+    padding: 3px;
+  }
+}

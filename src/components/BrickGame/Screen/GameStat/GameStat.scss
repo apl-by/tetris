@@ -36,4 +36,18 @@
     row-gap: 1.5px;
     column-gap: 1.5px;
   }
+
+  @media screen and (max-width: 410px) {
+  padding: 6px 0;
+  min-width: 55px;
+
+    &__title {
+      font-size: 10px;
+    }
+
+     &__value {
+    margin: 3px 0 7px;
+    font-size: 12.5px;
+  }
+  }
 }

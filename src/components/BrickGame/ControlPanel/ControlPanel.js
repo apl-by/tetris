@@ -1,7 +1,7 @@
 import "./ControlPanel.scss";
 import Btn from "./Btn/Btn";
 
-function ControlPanel({ onDown, onUp, pressedKey }) {
+function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
   const modShadow =
     pressedKey === ""
       ? null
@@ -15,7 +15,7 @@ function ControlPanel({ onDown, onUp, pressedKey }) {
         <Btn
           type="button"
           ariaLabel="влево"
-          modSize="m"
+          modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
           modShadow={pressedKey === "left" ? modShadow : null}
           mix="control-panel__left"
@@ -24,18 +24,8 @@ function ControlPanel({ onDown, onUp, pressedKey }) {
         />
         <Btn
           type="button"
-          ariaLabel="повернуть"
-          modSize="m"
-          modColor="yellow"
-          modShadow={pressedKey === "turn" ? modShadow : null}
-          mix="control-panel__up"
-          onDown={() => onDown("turn")}
-          onUp={() => onUp()}
-        />
-        <Btn
-          type="button"
           ariaLabel="вниз"
-          modSize="m"
+          modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
           modShadow={pressedKey === "down" ? modShadow : null}
           mix="control-panel__down"
@@ -44,8 +34,18 @@ function ControlPanel({ onDown, onUp, pressedKey }) {
         />
         <Btn
           type="button"
+          ariaLabel="повернуть"
+          modSize={isTablet ? "mobile" : "m"}
+          modColor="yellow"
+          modShadow={pressedKey === "turn" ? modShadow : null}
+          mix="control-panel__up"
+          onDown={() => onDown("turn")}
+          onUp={() => onUp()}
+        />
+        <Btn
+          type="button"
           ariaLabel="вправо"
-          modSize="m"
+          modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
           modShadow={pressedKey === "right" ? modShadow : null}
           mix="control-panel__right"
@@ -71,14 +71,13 @@ function ControlPanel({ onDown, onUp, pressedKey }) {
           modColor="green"
           modShadow={pressedKey === "pause" ? modShadow : null}
           mix="control-panel__small-btn"
-          // modShadow="reverse-s"
           onDown={() => onDown("pause")}
           onUp={() => onUp()}
         />
         <Btn
           type="button"
           ariaLabel="кнопка уронить"
-          modSize="l"
+          modSize={isTablet ? "mobile" : "l"}
           modColor="yellow"
           modShadow={pressedKey === "drop" ? modShadow : null}
           mix="control-panel__drop"
