@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/tetris/static/css/main.b9195b4c.chunk.css",
+    "main.js": "/tetris/static/js/main.3656e171.chunk.js",
+    "main.js.map": "/tetris/static/js/main.3656e171.chunk.js.map",
+    "runtime-main.js": "/tetris/static/js/runtime-main.8495046c.js",
+    "runtime-main.js.map": "/tetris/static/js/runtime-main.8495046c.js.map",
+    "static/js/2.35952cc5.chunk.js": "/tetris/static/js/2.35952cc5.chunk.js",
+    "static/js/2.35952cc5.chunk.js.map": "/tetris/static/js/2.35952cc5.chunk.js.map",
+    "static/js/3.312d3955.chunk.js": "/tetris/static/js/3.312d3955.chunk.js",
+    "static/js/3.312d3955.chunk.js.map": "/tetris/static/js/3.312d3955.chunk.js.map",
+    "index.html": "/tetris/index.html",
+    "static/css/main.b9195b4c.chunk.css.map": "/tetris/static/css/main.b9195b4c.chunk.css.map",
+    "static/js/2.35952cc5.chunk.js.LICENSE.txt": "/tetris/static/js/2.35952cc5.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/tetris/static/media/cursedtimer-webfont.2ed35081.woff",
+    "static/media/ControlPanel.scss": "/tetris/static/media/rotate.6597c9c7.svg",
+    "static/media/github_icon.0f101c29.svg": "/tetris/static/media/github_icon.0f101c29.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8495046c.js",
+    "static/js/2.35952cc5.chunk.js",
+    "static/css/main.b9195b4c.chunk.css",
+    "static/js/main.3656e171.chunk.js"
+  ]
+}
