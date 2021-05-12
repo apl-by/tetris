@@ -1,0 +1,79 @@
+@mixin size($size) {
+  width: $size;
+  height: $size;
+}
+
+@mixin mobile-size($size) {
+  width: 1.4 * $size;
+  height: $size;
+  border-radius: $size;
+}
+
+@mixin color($color) {
+  background-color: $color;
+}
+
+@mixin shadow-size($offset-1, $offset-2, $blur, $stretch) {
+  box-shadow: inset rgba(255, 255, 255, 0.5) $offset-1 $offset-1 $blur $stretch,
+    inset rgba(0, 0, 0, 0.5) $offset-2 $offset-2 $blur $stretch;
+}
+
+.btn {
+  box-shadow: none;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &_size_s {
+    @include size(30px);
+    @include shadow-size(1px, -1px, 3px, 1px);
+  }
+
+  &_size_m {
+    @include size(50px);
+    @include shadow-size(2px, -2px, 4px, 1px);
+  }
+
+  &_size_l {
+    @include size(80px);
+    @include shadow-size(2px, -2px, 4px, 1px);
+  }
+
+  &_size_mobile {
+    @include mobile-size(50px);
+    @include shadow-size(2px, -2px, 4px, 1px);
+  }
+
+  &_color_green {
+    @include color(#36be36);
+  }
+
+  &_color_yellow {
+    @include color(#daa520);
+  }
+
+  &_color_red {
+    @include color(#ff4500);
+  }
+
+
+  &_shadow_reverse-s {
+    @include shadow-size(-1px, 1px, 3px, 1px);
+  }
+
+  &_shadow_reverse-m {
+    @include shadow-size(-2px, 2px, 4px, 1px);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media screen and (max-width: 410px) {
+     &_size_mobile {
+    @include mobile-size(40px);
+  }
+  }
+}

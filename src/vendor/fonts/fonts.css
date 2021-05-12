@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'cursed_timer';
+    src: url('./cursed-timer/cursedtimer-webfont.woff2') format('woff2'),
+         url('./cursed-timer/cursedtimer-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+@font-face {
+    font-family: 'press_start_2pregular';
+    src:
+     url('./pressstart2p/PressStart2P-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
