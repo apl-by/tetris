@@ -7,4 +7,4 @@ export const CONTROL_KEYS = {
   turn: ["ArrowUp", "w", "W"],
 };
 
-export const GH_LINK = "https://github.com/apl-by";
+export const GH_LINK = "https://github.com/apl-by/tetris";
