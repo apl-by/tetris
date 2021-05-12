@@ -28,6 +28,8 @@ function Btn({
       aria-label={ariaLabel}
       onMouseDown={onDown}
       onMouseUp={onUp}
+      onTouchStart={onDown}
+      onTouchEnd={onUp}
     ></button>
   );
 }
