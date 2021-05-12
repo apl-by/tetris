@@ -54,7 +54,6 @@ function App() {
   const [count, setCount] = useState(0);
   const [gameOverTimer, setGameOverTimer] = useState(false);
   const [isRestart, setIsResrart] = useState(false);
-  console.log(count);
 
   const isTablet = useMediaQuery({
     query: "(max-width: 768px)",
