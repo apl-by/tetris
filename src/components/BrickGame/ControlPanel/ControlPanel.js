@@ -21,6 +21,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__left"
           onDown={() => onDown("left")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
         <Btn
           type="button"
@@ -31,6 +32,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__down"
           onDown={() => onDown("down")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
         <Btn
           type="button"
@@ -41,6 +43,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__up"
           onDown={() => onDown("turn")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
         <Btn
           type="button"
@@ -51,6 +54,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__right"
           onDown={() => onDown("right")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
       </div>
       <div className="control-panel__top">
@@ -63,6 +67,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__small-btn"
           onDown={() => onDown("restart")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
         <Btn
           type="button"
@@ -73,6 +78,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__small-btn"
           onDown={() => onDown("pause")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
         <Btn
           type="button"
@@ -83,6 +89,7 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           mix="control-panel__drop"
           onDown={() => onDown("drop")}
           onUp={() => onUp()}
+          isTablet={isTablet}
         />
       </div>
     </div>

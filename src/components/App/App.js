@@ -467,8 +467,9 @@ function App() {
   };
   // ------------------------------------------------------------------
 
-  // Обработчики событий мыши
-  const handleMouseDown = (key) => {
+  // Обработчики touch и mouse событий
+  const handlePressDown = (key) => {
+    if (pressedKey === key) return;
     key === "turn"
       ? turnPiece()
       : key === "left"
@@ -486,7 +487,7 @@ function App() {
     setPressedKey(key);
   };
 
-  const handleMouseUp = () => {
+  const handlePressUp = () => {
     setPressedKey("");
     if (setEffectCount !== 0) setEffectCount(0);
   };
@@ -505,8 +506,8 @@ function App() {
           isStarted={pieces.current}
           isEnd={isGameOver}
           record={recordScore}
-          onDown={handleMouseDown}
-          onUp={handleMouseUp}
+          onDown={handlePressDown}
+          onUp={handlePressUp}
           pressedKey={pressedKey}
           isTablet={isTablet}
         />

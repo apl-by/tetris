@@ -10,6 +10,7 @@ function Btn({
   mix,
   onDown,
   onUp,
+  isTablet,
 }) {
   const cnBtn = cn(
     "btn",
@@ -26,10 +27,10 @@ function Btn({
       className={cnBtn}
       type={type}
       aria-label={ariaLabel}
-      onMouseDown={onDown}
-      onMouseUp={onUp}
-      onTouchStart={onDown}
-      onTouchEnd={onUp}
+      onMouseDown={!isTablet ? onDown : null}
+      onMouseUp={!isTablet ? onUp : null}
+      onTouchStart={isTablet ? onDown : null}
+      onTouchEnd={isTablet ? onUp : null}
     ></button>
   );
 }
