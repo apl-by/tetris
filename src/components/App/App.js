@@ -346,12 +346,7 @@ function App() {
         : turnPiece();
     }
 
-    const time =
-      еffectСount < 1 && pressedKey !== "turn"
-        ? 170
-        : pressedKey === "turn"
-        ? 170
-        : 50;
+    const time = еffectСount < 1 ? 170 : pressedKey === "turn" ? 170 : 50;
     setTimeout(() => setIsEffectBlocked(false), time);
 
     if (еffectСount < 1) setEffectCount(еffectСount + 1);
@@ -496,8 +491,8 @@ function App() {
     <div className="app">
       <Main>
         <BrickGame
-          field={playArea || {}}
-          statFild={statArea || {}}
+          field={playArea}
+          statFild={statArea}
           score={score}
           lines={lines}
           level={level.lev}
