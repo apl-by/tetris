@@ -9,6 +9,11 @@
   color: #000;
 }
 
+@mixin icon-size($size) {
+  width: $size;
+  height: $size;
+}
+
 .link {
   @include font;
   text-decoration: none;
@@ -21,8 +26,7 @@
   }
 
   &__icon {
-    width: 24px;
-    height: 24px;
+    @include icon-size(24px);
   }
 
   @media screen and (max-width: 410px) {
@@ -30,8 +34,7 @@
     line-height: 16px;
 
     &__icon {
-    width: 18px;
-    height: 18px;
-  }
+      @include icon-size(18px);
+    }
   }
 }
