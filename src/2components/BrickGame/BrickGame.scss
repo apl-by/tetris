@@ -1,0 +1,42 @@
+@mixin radius($value) {
+  border-top-left-radius: $value;
+  border-top-right-radius: $value;
+}
+
+.brick-game {
+  @include radius(30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #afbcc9;
+  box-sizing: border-box;
+  padding: 40px 30px 20px;
+  max-width: 410px;
+  box-shadow: inset rgba(255, 255, 255, 0.7) 8px 8px 15px 5px,
+    inset rgba(0, 0, 0, 0.5) -8px 3px 15px 2px;
+  position: relative;
+  max-height: 680px;
+  height: 1000vh;
+
+  &__link {
+    position: absolute;
+    top: 10px;
+    left: 28px;
+  }
+
+  @media screen and (max-width: 768px) {
+    max-height: 650px;
+  }
+
+  @media screen and (max-width: 410px) {
+    @include radius(25px);
+    padding: 35px 27px 20px;
+     max-height: 550px;
+
+    &__link {
+    top: 13px;
+    left: 24px;
+  }
+  }
+}

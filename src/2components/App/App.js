@@ -89,20 +89,20 @@ function App() {
 
   // Создание стартового объекта состояния игровой области
   useLayoutEffect(() => {
-    // if (localStorage.getItem("saved-game")) {
-    //   const savedGame = JSON.parse(localStorage.getItem("saved-game"));
-    //   setPlayArea(savedGame.playArea);
-    //   setPlayAreaNoPiece(savedGame.playAreaNoPiece);
-    //   setStatArea(savedGame.statArea);
-    //   setStatAreaNoPiece(savedGame.statAreaNoPiece);
-    //   setPieces(savedGame.pieces);
-    //   setPiecePosition(savedGame.piecePosition);
-    //   setScore(savedGame.score);
-    //   setRecordScore(savedGame.recordScore);
-    //   setLines(savedGame.lines);
-    //   setLevel(savedGame.level);
-    //   return;
-    // }
+    if (localStorage.getItem("saved-game")) {
+      const savedGame = JSON.parse(localStorage.getItem("saved-game"));
+      setPlayArea(savedGame.playArea);
+      setPlayAreaNoPiece(savedGame.playAreaNoPiece);
+      setStatArea(savedGame.statArea);
+      setStatAreaNoPiece(savedGame.statAreaNoPiece);
+      setPieces(savedGame.pieces);
+      setPiecePosition(savedGame.piecePosition);
+      setScore(savedGame.score);
+      setRecordScore(savedGame.recordScore);
+      setLines(savedGame.lines);
+      setLevel(savedGame.level);
+      return;
+    }
 
     const initialPlayArea = createPlayArea();
     const initialStatArea = createStatArea();
