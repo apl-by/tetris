@@ -6,22 +6,22 @@ import _cloneDeep from "lodash/cloneDeep";
 export const createPlayArea = () => {
   const initialState = {};
   for (let i = 10; i < 210; i++) {
-    initialState[`${i}`] = { isActive: false, match: false, id: i };
+    initialState[i] = { isActive: false, match: false, id: i };
   }
   return initialState;
 };
 
 export const createStatArea = () => {
   const statAria = {};
-  const arrNum = BASE_NUM;
+  const arrNum = [...BASE_NUM];
   for (let i = 0; i < 8; i++) {
     const num = arrNum.splice(0, 1);
-    statAria[`${num}`] = { isActive: false, id: num };
+    statAria[num] = { isActive: false, id: i };
   }
   return statAria;
 };
 
-const mixArray = (array) => {
+const _mixArray = (array) => {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -30,127 +30,157 @@ const mixArray = (array) => {
   return arr;
 };
 
-export const handlePieces = (piecesObj) => {
-  if (piecesObj.all.length < 2) {
-    const array = new Array(2).fill(PIECES_TYPES).flat();
-    const newPieces = [...piecesObj.all, ...mixArray(array)];
-    return {
-      all: newPieces.slice(1),
-      current: newPieces[0],
-      next: newPieces[1],
-    };
-  }
-  return {
-    all: piecesObj.all.slice(1),
-    current: piecesObj.all[0],
-    next: piecesObj.all[1],
-  };
+// export const handlePieces = (piecesObj) => {
+//   if (piecesObj.all.length < 2) {
+//     const array = new Array(2).fill(PIECES_TYPES).flat();
+//     const newPieces = [...piecesObj.all, ..._mixArray(array)];
+//     return {
+//       all: newPieces.slice(1),
+//       current: newPieces[0],
+//       next: newPieces[1],
+//     };
+//   }
+//   return {
+//     all: piecesObj.all.slice(1),
+//     current: piecesObj.all[0],
+//     next: piecesObj.all[1],
+//   };
+// };
+
+export const producePieces = () => {
+  const array = new Array(2).fill(PIECES_TYPES).flat();
+  return _mixArray(array);
 };
 
-export const displayNextPiece = (next, statArea) => {
-  const newStatArea = _cloneDeep(statArea);
-  const pieceCells = PIECES_CONFIG[`${next}`].base.cells;
-  pieceCells.forEach((i) => {
-    newStatArea[`${i}`].isActive = true;
-  });
-  return newStatArea;
-};
+// export const displayNextPiece = (next, statArea) => {
+//   const newStatArea = _cloneDeep(statArea);
+//   const pieceCells = PIECES_CONFIG[`${next}`].base.cells;
+//   pieceCells.forEach((i) => {
+//     newStatArea[`${i}`].isActive = true;
+//   });
+//   return newStatArea;
+// };
 
-export const updatePlayArea = (playArea, piece, piecePos) => {
-  const newPlayArea = _cloneDeep(playArea);
-  const { position, x, y } = piecePos;
+// export const updatePlayArea = (playArea, piece, piecePos) => {
+//   const newPlayArea = _cloneDeep(playArea);
+//   const { position, x, y } = piecePos;
+//   const sum = x + y;
+//   const pieceCells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
+//   const newPos = pieceCells.map((i) => i + sum);
+
+//   newPos.forEach((i) => {
+//     if (i < 10) return;
+//     newPlayArea[`${i}`].isActive = true;
+//   });
+//   return newPlayArea;
+// };
+
+export const checkMovePermit = (
+  playArea,
+  currentPiece,
+  position,
+  direction
+) => {
+  const sideToCheck = direction === "turn" ? "cells" : direction;
+  const { posType, x, y } = position;
   const sum = x + y;
-  const pieceCells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
-  const newPos = pieceCells.map((i) => i + sum);
-
-  newPos.forEach((i) => {
-    if (i < 10) return;
-    newPlayArea[`${i}`].isActive = true;
-  });
-  return newPlayArea;
-};
-
-export const checkMovement = (playArea, piece, piecePos, direction) => {
-  const { position, x, y } = piecePos;
-  const sum = x + y;
-  const cells = PIECES_CONFIG[`${piece}`][`${position}`][`${direction}`];
+  const cells = PIECES_CONFIG[currentPiece][posType][sideToCheck];
   const cellsToCheck = cells.map((i) => i + sum);
 
   if (cellsToCheck.some((i) => i > 209)) return false;
 
-  if (
-    direction === "checkLeft" &&
-    cellsToCheck.some((i) =>
+  if (direction === "checkLeft") {
+    return !cellsToCheck.some((i) =>
       i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
-    )
-  )
-    return false;
+    );
+  }
 
-  if (
-    direction === "checkRight" &&
-    cellsToCheck.some((i) =>
+  if (direction === "checkRight") {
+    return !cellsToCheck.some((i) =>
       i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
-    )
-  )
-    return false;
+    );
+  }
+
+  if (direction === "turn") {
+    return !(
+      cellsToCheck.some((i) =>
+        i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
+      ) &&
+      cellsToCheck.some((i) =>
+        i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
+      )
+    );
+  }
 
   return !cellsToCheck.some((i) =>
-    i < 10 ? false : playArea[`${i}`].isActive === true
+    i < 10 ? false : playArea[i].isActive === true
   );
 };
 
-export const getTurnPosition = (piecePosition) => {
-  const clone = { ...piecePosition };
-  clone.position =
-    clone.position === "base"
+export const getCells = (currentPiece, prevPos, nextPos) => {
+  const prevBaseCells = PIECES_CONFIG[currentPiece][prevPos.posType].cells;
+  const nextBaseCells = PIECES_CONFIG[currentPiece][nextPos.posType].cells;
+  const prevCells = prevBaseCells
+    .map((i) => i + prevPos.x + prevPos.y)
+    .filter((i) => i >= 10 && i < 210);
+  const nextCells = nextBaseCells
+    .map((i) => i + nextPos.x + nextPos.y)
+    .filter((i) => i >= 10 && i < 210);
+  return { prevCells, nextCells };
+};
+
+export const setPositionOnTurn = (position) => {
+  const newPos = { ...position };
+  newPos.posType =
+    position.posType === "base"
       ? "left"
-      : clone.position === "left"
+      : position.posType === "left"
       ? "reverse"
-      : clone.position === "reverse"
+      : position.posType === "reverse"
       ? "right"
       : "base";
 
-  return clone;
+  return newPos;
 };
 
-export const checkRotation = (playArea, piece, piecePos) => {
-  const { position, x, y } = piecePos;
+// export const checkRotation = (playArea, piece, piecePos) => {
+//   const { position, x, y } = piecePos;
+//   const sum = x + y;
+//   const cells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
+//   const cellsToCheck = cells.map((i) => i + sum);
+
+//   if (cellsToCheck.some((i) => i > 209)) return false;
+
+//   if (
+//     cellsToCheck.some((i) =>
+//       i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
+//     ) &&
+//     cellsToCheck.some((i) =>
+//       i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
+//     )
+//   )
+//     return false;
+
+//   return !cellsToCheck.some((i) =>
+//     i < 10 ? false : playArea[`${i}`].isActive === true
+//   );
+// };
+
+export const setPositionOnDrop = (playArea, currentPiece, position) => {
+  const { posType, x, y } = position;
   const sum = x + y;
-  const cells = PIECES_CONFIG[`${piece}`][`${position}`].cells;
-  const cellsToCheck = cells.map((i) => i + sum);
-
-  if (cellsToCheck.some((i) => i > 209)) return false;
-
-  if (
-    cellsToCheck.some((i) =>
-      i < 0 ? String(i).match(/-\d?1$/) : String(i).match(/9$/)
-    ) &&
-    cellsToCheck.some((i) =>
-      i < 0 ? String(i).match(/-\d?0$/) : String(i).match(/0$/)
-    )
-  )
-    return false;
-
-  return !cellsToCheck.some((i) =>
-    i < 10 ? false : playArea[`${i}`].isActive === true
-  );
-};
-
-export const handleDrop = (playArea, piece, piecePos) => {
-  const { position, x, y } = piecePos;
-  const sum = x + y;
-  const cells = PIECES_CONFIG[`${piece}`][`${position}`].checkBottom;
-  const cellsToCheck = cells.map((i) => i + sum);
+  const cells = PIECES_CONFIG[currentPiece][posType].checkBottom;
+  let cellsToCheck = cells.map((i) => i + sum);
 
   let count = y;
   while (count < 190) {
-    if (cellsToCheck.some((i) => i > 209 || playArea[`${i}`].isActive === true))
+    if (cellsToCheck.some((i) => i > 209 || playArea[i].isActive === true))
       break;
 
     count += 10;
-    cellsToCheck.forEach((i, ind, arr) => (arr[ind] = i + 10));
+    cellsToCheck = cellsToCheck.map((i) => i + 10);
   }
-  return { ...piecePos, y: count };
+  return { ...position, y: count };
 };
 
 export const searchMatch = (playArea) => {

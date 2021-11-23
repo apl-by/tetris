@@ -27,10 +27,10 @@ function Btn({
       className={cnBtn}
       type={type}
       aria-label={ariaLabel}
-      onMouseDown={!isTablet ? onDown : null}
-      onMouseUp={!isTablet ? onUp : null}
-      onTouchStart={isTablet ? onDown : null}
-      onTouchEnd={isTablet ? onUp : null}
+      // onMouseDown={!isTablet ? onDown : null}
+      // onMouseUp={!isTablet ? onUp : null}
+      // onTouchStart={isTablet ? onDown : null}
+      // onTouchEnd={isTablet ? onUp : null}
     ></button>
   );
 }
