@@ -1,7 +1,15 @@
 import "./GameStat.scss";
 import Block from "../Block/Block";
+import { statSelectors, mainSelectors } from "../../../../services/selectors";
+import { useSelector } from "react-redux";
 
-function GameStat({ statFild, score, lines, level, record }) {
+function GameStat() {
+  const score = useSelector(statSelectors.score);
+  const record = useSelector(statSelectors.record);
+  const lines = useSelector(statSelectors.lines);
+  const level = useSelector(statSelectors.level);
+  const statArea = useSelector(mainSelectors.statArea);
+
   return (
     <div className="game-stat">
       <h2 className="game-stat__title">Очки:</h2>
@@ -12,7 +20,7 @@ function GameStat({ statFild, score, lines, level, record }) {
       <p className="game-stat__value">{level}</p>
       <h2 className="game-stat__title">Следующая:</h2>
       <ul className="game-stat__list">
-        {Object.entries(statFild).map(([k, v]) => (
+        {Object.entries(statArea).map(([k, v]) => (
           <Block key={v.id} state={v.isActive} match={v.match} />
         ))}
       </ul>
