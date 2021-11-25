@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import mainReduser from "./slices/mainSlice";
 import statReduser from "./slices/statSlice";
 import gameControlReduser from "./slices/gameControlSlice";
+import { setSaved } from "./slices/mainSlice";
 let time = new Date().getTime();
 
 const preloadedState = localStorage.getItem("reduxState")
@@ -22,10 +23,14 @@ const saveToLocalStorage = () =>
   localStorage.setItem("reduxState", JSON.stringify(store.getState()));
 
 store.subscribe(() => {
-  const isRoundEnd = store.getState().main.isRoundEnd;
+  const { isRoundEnd, needSave } = store.getState().main;
   const isPause = store.getState().gameControl.isPause;
   if (isRoundEnd) return;
   if (isPause) {
+    return saveToLocalStorage();
+  }
+  if (needSave) {
+    store.dispatch(setSaved());
     return saveToLocalStorage();
   }
   const currentTime = new Date().getTime();
