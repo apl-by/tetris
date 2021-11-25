@@ -16,7 +16,7 @@ export const store = configureStore({
     gameControl: gameControlReduser,
   },
   preloadedState,
-  devTools: true,
+  devTools: false,
 });
 
 const saveToLocalStorage = () =>
