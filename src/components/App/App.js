@@ -234,7 +234,8 @@ function App() {
 
   const controlHandlersDelay = useMemo(() => {
     if (MOVE_BUTTONS.includes(pressedBtn)) {
-      if (pressedBtn === "turn" || pressedBtn === "drop") return 170;
+      if (pressedBtn === "drop") return 250;
+      if (pressedBtn === "turn") return 170;
       if (wasFirstInvoke) return 50;
       return 120;
     } else {

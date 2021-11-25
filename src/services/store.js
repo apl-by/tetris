@@ -24,8 +24,8 @@ const saveToLocalStorage = () =>
 
 store.subscribe(() => {
   const { isRoundEnd, needSave } = store.getState().main;
-  const isPause = store.getState().gameControl.isPause;
-  if (isRoundEnd) return;
+  const { isPause, pressedBtn } = store.getState().gameControl;
+  if (isRoundEnd || pressedBtn) return;
   if (isPause) {
     return saveToLocalStorage();
   }
@@ -36,7 +36,7 @@ store.subscribe(() => {
   const currentTime = new Date().getTime();
   const delta = currentTime - time;
 
-  if (delta > 1000) {
+  if (delta > 5000) {
     time = currentTime;
     saveToLocalStorage();
   }

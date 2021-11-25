@@ -166,23 +166,19 @@ export const updPlayAreaWithMatches = (playArea, matches) => {
   const clone = _cloneDeep(playArea);
   const matchedRows = Object.values(matches).map((i) => i.rowStartCell);
   const rowsBefore = [];
-  for (let i = matchedRows[0]; i > 10; i -= 10) {
+  for (let i = matchedRows[0]; i >= 10; i -= 10) {
     rowsBefore.push(i);
   }
   const rowsWithoutMatches = rowsBefore.filter((i) => !matchedRows.includes(i));
-
-  let stop = false;
   rowsBefore.forEach((i) => {
-    if (stop) return;
-
     const rowForReplace = rowsWithoutMatches.splice(0, 1);
-    let activeCells = 0;
     for (let j = 0; j < 10; j++) {
-      if (clone[`${i + j}`].isActive) activeCells++;
-      clone[`${i + j}`].isActive = clone[`${+rowForReplace + j}`].isActive;
+      if (rowForReplace.length === 0) {
+        clone[`${i + j}`].isActive = false;
+      } else {
+        clone[`${i + j}`].isActive = clone[`${+rowForReplace + j}`].isActive;
+      }
     }
-
-    if (!activeCells) stop = true;
   });
 
   return clone;
