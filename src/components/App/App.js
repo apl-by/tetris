@@ -236,7 +236,7 @@ function App() {
     if (MOVE_BUTTONS.includes(pressedBtn)) {
       if (pressedBtn === "turn" || pressedBtn === "drop") return 170;
       if (wasFirstInvoke) return 50;
-      return 110;
+      return 120;
     } else {
       return null;
     }
