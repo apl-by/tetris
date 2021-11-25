@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import mainReduser from "./slices/mainSlice";
 import statReduser from "./slices/statSlice";
 import gameControlReduser from "./slices/gameControlSlice";
-import throttle from "lodash/throttle";
+let time = new Date().getTime();
 
 const preloadedState = localStorage.getItem("reduxState")
   ? JSON.parse(localStorage.getItem("reduxState"))
@@ -26,7 +26,13 @@ store.subscribe(() => {
   const isPause = store.getState().gameControl.isPause;
   if (isRoundEnd) return;
   if (isPause) {
+    return saveToLocalStorage();
+  }
+  const currentTime = new Date().getTime();
+  const delta = currentTime - time;
+
+  if (delta > 1000) {
+    time = currentTime;
     saveToLocalStorage();
   }
-  throttle(saveToLocalStorage, 1000);
 });
