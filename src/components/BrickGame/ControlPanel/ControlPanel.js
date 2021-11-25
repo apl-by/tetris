@@ -1,13 +1,16 @@
 import "./ControlPanel.scss";
 import Btn from "./Btn/Btn";
+import { gameControlSelectors } from "../../../services/selectors";
+import { useSelector } from "react-redux";
 
-function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
-  // const modShadow =
-  //   pressedKey === ""
-  //     ? null
-  //     : ["restart", "pause"].includes(pressedKey)
-  //     ? "reverse-s"
-  //     : "reverse-m";
+function ControlPanel({ onDown, onUp, isTablet }) {
+  const pressedBtn = useSelector(gameControlSelectors.pressedBtn);
+  const modShadow =
+    pressedBtn === ""
+      ? null
+      : ["restart", "pause"].includes(pressedBtn)
+      ? "reverse-s"
+      : "reverse-m";
 
   return (
     <div className="control-panel">
@@ -17,10 +20,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="влево"
           modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
-          // modShadow={pressedKey === "left" ? modShadow : null}
+          modShadow={pressedBtn === "left" ? modShadow : null}
           mix="control-panel__left"
-          // onDown={() => onDown("left")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("left")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
         <Btn
@@ -28,10 +31,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="вниз"
           modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
-          // modShadow={pressedKey === "down" ? modShadow : null}
+          modShadow={pressedBtn === "down" ? modShadow : null}
           mix="control-panel__down"
-          // onDown={() => onDown("down")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("down")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
         <Btn
@@ -39,10 +42,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="повернуть"
           modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
-          // modShadow={pressedKey === "turn" ? modShadow : null}
+          modShadow={pressedBtn === "turn" ? modShadow : null}
           mix="control-panel__up"
-          // onDown={() => onDown("turn")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("turn")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
         <Btn
@@ -50,10 +53,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="вправо"
           modSize={isTablet ? "mobile" : "m"}
           modColor="yellow"
-          // modShadow={pressedKey === "right" ? modShadow : null}
+          modShadow={pressedBtn === "right" ? modShadow : null}
           mix="control-panel__right"
-          // onDown={() => onDown("right")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("right")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
       </div>
@@ -63,10 +66,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="кнопка сбросить"
           modSize="s"
           modColor="red"
-          // modShadow={pressedKey === "restart" ? modShadow : null}
+          modShadow={pressedBtn === "restart" ? modShadow : null}
           mix="control-panel__small-btn"
-          // onDown={() => onDown("restart")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("restart")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
         <Btn
@@ -74,10 +77,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="кнопка пауза/старт"
           modSize="s"
           modColor="green"
-          // modShadow={pressedKey === "pause" ? modShadow : null}
+          modShadow={pressedBtn === "pause" ? modShadow : null}
           mix="control-panel__small-btn"
-          // onDown={() => onDown("pause")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("pause")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
         <Btn
@@ -85,10 +88,10 @@ function ControlPanel({ onDown, onUp, pressedKey, isTablet }) {
           ariaLabel="кнопка уронить"
           modSize={isTablet ? "mobile" : "l"}
           modColor="yellow"
-          // modShadow={pressedKey === "drop" ? modShadow : null}
+          modShadow={pressedBtn === "drop" ? modShadow : null}
           mix="control-panel__drop"
-          // onDown={() => onDown("drop")}
-          // onUp={() => onUp()}
+          onDown={() => onDown("drop")}
+          onUp={() => onUp()}
           isTablet={isTablet}
         />
       </div>

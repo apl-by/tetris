@@ -4,8 +4,7 @@ const initialState = {
   isPause: true,
   isGameOn: false,
   isGameOver: false,
-  isRoundEnd: false,
-  pressedKey: "",
+  pressedBtn: "",
 };
 
 const gameControlSlice = createSlice({
@@ -15,25 +14,41 @@ const gameControlSlice = createSlice({
     togglePause: (state, action) => {
       state.isPause = !state.isPause;
     },
+    setPause: (state, action) => {
+      state.isPause = true;
+    },
     start: (state, action) => {
       state.isGameOn = true;
       state.isGameOver = false;
       state.isPause = false;
     },
-    setKeyDown: (state, action) => {
-      state.pressedKey = action.payload;
+    setBtn: (state, action) => {
+      state.pressedBtn = action.payload;
     },
-    clearKeyDown: (state, action) => {
-      state.pressedKey = action.payload;
+    clearBtn: (state, action) => {
+      state.pressedBtn = action.payload;
     },
+    setGameOver: (state, action) => {
+      state.isGameOver = true;
+      state.isGameOn = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("restart", (state, action) => {
+      state.isGameOn = true;
+      state.isGameOver = false;
+      state.isPause = false;
+    });
   },
 });
 
 export const {
   togglePause,
+  setPause,
   start,
-  setKeyDown,
-  clearKeyDown,
+  setBtn,
+  clearBtn,
+  setGameOver,
 } = gameControlSlice.actions;
 
 export default gameControlSlice.reducer;

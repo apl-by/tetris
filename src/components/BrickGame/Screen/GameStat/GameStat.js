@@ -17,7 +17,7 @@ function GameStat() {
       <h2 className="game-stat__title">Линии:</h2>
       <p className="game-stat__value">{lines}</p>
       <h2 className="game-stat__title">Уровень:</h2>
-      <p className="game-stat__value">{level.lev}</p>
+      <p className="game-stat__value">{level}</p>
       <h2 className="game-stat__title">Следующая:</h2>
       <ul className="game-stat__list">
         {Object.entries(statArea).map(([k, v]) => (

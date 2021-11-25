@@ -5,7 +5,7 @@ import Link from "../generic/Link/Link";
 import ghIcon from "../../images/github_icon.svg";
 import { GH_LINK } from "../../utils/config";
 
-function BrickGame({ onDown, onUp, pressedKey, isTablet }) {
+function BrickGame({ isTablet, ...props }) {
   return (
     <section className="brick-game">
       {isTablet && (
@@ -17,12 +17,7 @@ function BrickGame({ onDown, onUp, pressedKey, isTablet }) {
         />
       )}
       <Screen />
-      <ControlPanel
-        // onDown={onDown}
-        // onUp={onUp}
-        // pressedKey={pressedKey}
-        isTablet={isTablet}
-      />
+      <ControlPanel {...props} isTablet={isTablet} />
     </section>
   );
 }
