@@ -62,6 +62,7 @@ const initialState = {
     y: 0,
   },
   isRoundEnd: false,
+  isNeedSave: false,
 };
 
 const mainSlice = createSlice({
@@ -88,6 +89,7 @@ const mainSlice = createSlice({
       // обновляем свойство state.position
       state.position = initialState.position;
       state.isRoundEnd = false;
+      state.isNeedSave = true;
     },
     drop: (state, action) => {
       const playArea = state.playArea;
@@ -160,11 +162,15 @@ const mainSlice = createSlice({
       const cells = Array.from({ length: 10 }, (el, ind) => num + ind);
       cells.forEach((i) => (state.playArea[i].isActive = false));
     },
+    setSaved: (state, action) => {
+      state.isNeedSave = false;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(handleMatchesAsync.pending, (state, action) => {
         action.meta.arg.cells.forEach((i) => (state.playArea[i].match = true));
+        state.isNeedSave = false;
       })
       .addCase(handleMatchesAsync.fulfilled, (state, action) => {
         const { cells, newPlayArea } = action.meta.arg;
@@ -190,5 +196,6 @@ export const {
   turn,
   fillCells,
   emptyCells,
+  setSaved,
 } = mainSlice.actions;
 export default mainSlice.reducer;

@@ -54,7 +54,7 @@ function App() {
   const score = useSelector(statSelectors.score);
   const level = useSelector(statSelectors.level);
   const lines = useSelector(statSelectors.lines);
-  console.log(pressedBtn);
+
   const isTablet = useMediaQuery({
     query: "(max-width: 768px)",
   });
