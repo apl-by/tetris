@@ -27,7 +27,7 @@ const statSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase("restart", (state, action) => ({
+    builder.addCase("reset", (state, action) => ({
       ...initialState,
       record: state.record,
     }));

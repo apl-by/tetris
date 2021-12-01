@@ -182,7 +182,7 @@ const mainSlice = createSlice({
         state.isRoundEnd = true;
       })
       .addCase(gameOverAsync.fulfilled, (state, action) => initialState)
-      .addCase("restart", (state, action) => initialState);
+      .addCase("reset", (state, action) => initialState);
   },
 });
 

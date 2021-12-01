@@ -8,7 +8,7 @@ function ControlPanel({ onDown, onUp, isTablet }) {
   const modShadow =
     pressedBtn === ""
       ? null
-      : ["restart", "pause"].includes(pressedBtn)
+      : ["reset", "pause"].includes(pressedBtn)
       ? "reverse-s"
       : "reverse-m";
 
@@ -66,9 +66,9 @@ function ControlPanel({ onDown, onUp, isTablet }) {
           ariaLabel="кнопка сбросить"
           modSize="s"
           modColor="red"
-          modShadow={pressedBtn === "restart" ? modShadow : null}
+          modShadow={pressedBtn === "reset" ? modShadow : null}
           mix="control-panel__small-btn"
-          onDown={() => onDown("restart")}
+          onDown={() => onDown("reset")}
           onUp={() => onUp()}
           isTablet={isTablet}
         />

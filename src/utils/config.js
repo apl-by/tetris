@@ -8,7 +8,7 @@ export const MOVE_BUTTONS = ["left", "right", "down", "turn", "drop"];
 
 export const CONTROL_KEYS = {
   pause: ["p", "P", "з", "З"],
-  restart: ["r", "R", "к", "К"],
+  reset: ["r", "R", "к", "К"],
   left: ["ArrowLeft", "a", "A", "ф", "Ф"],
   right: ["ArrowRight", "d", "D", "в", "В"],
   down: ["ArrowDown", "s", "S", "ы", "Ы"],

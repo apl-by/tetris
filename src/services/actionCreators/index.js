@@ -1,1 +1,1 @@
-export const restart = (payload) => ({ type: "restart", payload });
+export const reset = (payload) => ({ type: "reset", payload });

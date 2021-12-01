@@ -4,11 +4,12 @@ import Main from "../Main/Main";
 import BrickGame from "../BrickGame/BrickGame";
 import Footer from "../Footer/Footer";
 import { useMediaQuery } from "react-responsive";
-import { useDispatch, useSelector } from "react-redux";
-import { batch } from "react-redux";
-import { gameControlSelectors } from "../../services/selectors";
-import { mainSelectors } from "../../services/selectors";
-import { statSelectors } from "../../services/selectors";
+import { useDispatch, useSelector, batch } from "react-redux";
+import {
+  gameControlSelectors,
+  mainSelectors,
+  statSelectors,
+} from "../../services/selectors";
 import {
   start,
   togglePause,
@@ -36,7 +37,7 @@ import {
   getScore,
   checkGameOver,
 } from "../../utils/utils";
-import { restart } from "../../services/actionCreators";
+import { reset } from "../../services/actionCreators";
 
 function App() {
   const [key, setKey] = useState("");
@@ -138,11 +139,10 @@ function App() {
     });
   };
 
-  const startGame = (restartKey) => {
+  const startGame = () => {
     batch(() => {
-      if (restartKey) dispatch(setBtn("restart"));
-      if (isGameOver || restartKey) {
-        dispatch(restart());
+      if (isGameOver) {
+        dispatch(reset());
       }
       dispatch(start());
       dispatch(setPieces());
@@ -154,6 +154,13 @@ function App() {
     isGameOn ? dispatch(togglePause()) : startGame();
   };
 
+  const resetGame = () => {
+    batch(() => {
+      dispatch(setBtn("reset"));
+      dispatch(reset());
+    });
+  };
+
   const handleKeydown = (e) => {
     if (!isPause) e.preventDefault();
     if (isRoundEnd || key === e.key || key === e.keyCode) return;
@@ -163,10 +170,9 @@ function App() {
       return handlePause();
     }
 
-    if (CONTROL_KEYS.restart.includes(e.key)) {
+    if (CONTROL_KEYS.reset.includes(e.key)) {
       setKey(e.key);
-      startGame("restart");
-      return;
+      return resetGame();
     }
 
     if (isGameOver || isPause) return;
@@ -206,11 +212,7 @@ function App() {
   // Обработчики touch и mouse событий
   const handlePressDown = (key) => {
     if (pressedBtn === key || isRoundEnd) return;
-    key === "restart"
-      ? startGame("restart")
-      : key === "pause"
-      ? handlePause()
-      : void 0;
+    key === "reset" ? resetGame() : key === "pause" ? handlePause() : void 0;
     if (isGameOver || isPause) return;
     key === "turn"
       ? handleTurnPiece()

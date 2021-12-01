@@ -34,11 +34,10 @@ const gameControlSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase("restart", (state, action) => {
-      state.isGameOn = true;
-      state.isGameOver = false;
-      state.isPause = false;
-    });
+    builder.addCase("reset", (state, action) => ({
+      ...initialState,
+      pressedBtn: state.pressedBtn,
+    }));
   },
 });
 
